@@ -1,6 +1,6 @@
-# DiagrammeR Examples!
+# DiagrammeR Examples
 
-A compendium of DiagrammeR examples, provided as standalone R scripts.
+A collection of DiagrammeR examples, provided as standalone R scripts.
 
  | Example Script
 ---|:--
