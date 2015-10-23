@@ -1,2 +1,4 @@
-# DiagrammeR-examples
-A collection of DiagrammeR examples
+# DiagrammeR Examples!
+
+A compendium of DiagrammeR examples, provided as standalone R scripts.
+
