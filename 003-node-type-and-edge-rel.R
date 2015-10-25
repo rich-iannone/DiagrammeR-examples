@@ -11,7 +11,7 @@ library(DiagrammeR)
 # a node `type`. This is easily done when creating a
 # node data frame (ndf) by using the `type` argument. 
 
-# Create a node data frame
+# Create a node data frame:
 
 nodes_with_types <- 
   create_nodes(nodes = c("a", "b", "c", "d",
@@ -20,12 +20,12 @@ nodes_with_types <-
                         "Y", "Y", "Z", "Z"),
                label = TRUE)
 
-# Create a graph with just the nodes (no edges)
+# Create a graph with just nodes (no edges):
 
 graph_nodes <-
   create_graph(nodes_df = nodes_with_types)
 
-# View the graph in the Viewer
+# View the graph in the Viewer:
 
 render_graph(graph = graph_nodes,
              output = "visNetwork")
