@@ -1,4 +1,4 @@
-# 003 # Node Type and Edge Rel
+# 003 # The Node Type and The Edge Relationship
 
 library(DiagrammeR)
 
