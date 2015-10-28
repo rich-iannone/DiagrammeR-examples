@@ -8,6 +8,7 @@ library(DiagrammeR)
 
 # First, create an empty graph. It's sometimes good to
 # start with an empty slate:
+
 graph <- create_graph()
 
 # You can individual nodes to a graph by using the
@@ -191,4 +192,3 @@ edge_count(graph)
 # nodes.
 
 render_graph(graph, output = "visNetwork")
-
