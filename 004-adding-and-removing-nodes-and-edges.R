@@ -121,7 +121,7 @@ render_graph(graph, output = "visNetwork")
 # do this unconditionally to all edges in the graph:
 
 graph <- set_edge_attr(graph,
-                       attr = "rel",
+                       edge_attr = "rel",
                        value = "to_letter")
 
 # How to check if applied? Use the `get_edge_attr()`
