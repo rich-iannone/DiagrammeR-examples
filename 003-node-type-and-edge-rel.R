@@ -14,8 +14,7 @@ library(DiagrammeR)
 # Create a node data frame:
 
 nodes_with_types <- 
-  create_nodes(nodes = c("a", "b", "c", "d",
-                         "e", "f", "g", "h"),
+  create_nodes(nodes = 1:8,
                type = c("X", "X", "X", "X",
                         "Y", "Y", "Z", "Z"),
                label = TRUE)
@@ -61,16 +60,22 @@ node_count(graph_nodes, type = c("X", "Y"))
 #> [1] 6
 
 # To identify which nodes are of a specific type, use
-# the `get_nodes()` function with the `type` supplied:
+# the `get_nodes()` function with `type` supplied to
+# the `node_attr` argument and matching on `X`:
 
-get_nodes(graph_nodes, type = "X")
-#> [1] "a" "b" "c" "d"
+get_nodes(graph_nodes, node_attr = "type", match = "X")
+#> [1] "1" "2" "3" "4"
 
-# As before, you can also return the node IDs for nodes
-# of several `types`:
+# You can also return the node IDs for nodes of several
+# `types` by combining `get_nodes()` statements:
 
-get_nodes(graph_nodes, type = c("X", "Y"))
-#> [1] "a" "b" "c" "d" "e" "f"
+c(get_nodes(graph_nodes,
+          node_attr = "type",
+          match = "X"),
+  get_nodes(graph_nodes,
+            node_attr = "type",
+            match = "Y"))
+#> [1] "1" "2" "3" "4" "5" "6"
 
 #
 # Part 2. The Edge Relationship
@@ -84,10 +89,8 @@ get_nodes(graph_nodes, type = c("X", "Y"))
 # Create an edge data frame
 
 edges_with_rels <- 
-  create_edges(from = c("a", "b", "e", "g", "f",
-                        "h", "d", "d"),
-               to =   c("b", "e", "h", "h", "h",
-                        "c", "c", "a"),
+  create_edges(from = c(1, 2, 5, 7, 6, 8, 4, 4),
+               to =   c(2, 5, 8, 8, 8, 3, 3, 1),
                rel = c("rel_a", "rel_a", "rel_b",
                        "rel_c", "rel_b", "rel_a",
                        "rel_b", "rel_c"))
@@ -139,24 +142,30 @@ edge_count(graph_nodes_edges,
 # Output can either be as a `list` (the default), as a
 # data frame (`df`), or as a `vector`.
 
-get_edges(graph_nodes_edges, rel = "rel_a",
+get_edges(graph_nodes_edges,
+          edge_attr = "rel",
+          match = "rel_a",
           return_type = "list")
 #> [[1]]
-#> [1] "a" "b" "h"
+#> [1] "1" "2" "8"
 #> 
 #> [[2]]
-#> [1] "b" "e" "c"
+#> [1] "2" "5" "3"
 
-get_edges(graph_nodes_edges, rel = "rel_a",
+get_edges(graph_nodes_edges,
+          edge_attr = "rel",
+          match = "rel_a",
           return_type = "df")
 #>   from to
-#> 1    a  b
-#> 2    b  e
-#> 3    h  c
+#> 1    1  2
+#> 2    2  5
+#> 3    8  3
 
-get_edges(graph_nodes_edges, rel = "rel_a",
+get_edges(graph_nodes_edges,
+          edge_attr = "rel",
+          match = "rel_a",
           return_type = "vector")
-#> [1] "a -> b" "b -> e" "h -> c"
+#> [1] "1 -> 2" "2 -> 5" "8 -> 3"
 
 # Either way, you can indeed isolate those edges that
 # have certain `rel` values attached.

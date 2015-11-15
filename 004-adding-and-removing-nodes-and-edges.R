@@ -13,16 +13,16 @@ graph <- create_graph()
 
 # You can individual nodes to a graph by using the
 # `add_node()` function. Let's add two nodes with IDs
-# "a" and "b":
+# "1" and "2":
 
-graph <- add_node(graph, node = "a", type = "letter")
-graph <- add_node(graph, node = "b", type = "letter")
+graph <- add_node(graph, node = 1, type = "number")
+graph <- add_node(graph, node = 2, type = "number")
 
 # To prove that the nodes are in the graph, we can use
 # the `get_nodes()` function:
 
 get_nodes(graph)
-#> [1] "a" "b"
+#> [1] "1" "2"
 
 # Likewise, to prove that there are no edges in the
 # graph, we can use the `get_edges()` function:
@@ -31,21 +31,21 @@ get_edges(graph)
 #> [1] NA
 
 # A graph can indeed have no edges but it's silly.
-# Add a single edge with the `add_edges()` function:
+# Add a single edge with the `add_edge()` function:
 
-graph <- add_edges(graph,
-                   from = "a", to = "b",
-                   rel = "to_letter")
+graph <- add_edge(graph,
+                  from = 1, to = 2,
+                  rel = "to_number")
 
 # Now verify that the edge has been added by using
 # `get_edges()` again:
 
 get_edges(graph)
 #> [[1]]
-#> [1] "a"
+#> [1] "1"
 #> 
 #> [[2]]
-#> [1] "b"
+#> [1] "2"
 
 # The `get_edges()` function can output the pairs
 # of nodes in edges either as a list (as above, it's
@@ -54,57 +54,62 @@ get_edges(graph)
 
 get_edges(graph, return_type = "df")
 #>   from to
-#> 1    a  b
+#> 1    1  2
 
 get_edges(graph, return_type = "vector")
-#> [1] "a -> b"
+#> [1] "1 -> 2"
 
 # Nodes can also be added while specifying edges. This
 # is best shown through several examples:
 
-graph <- add_node(graph, node = "c",
-                  type = "letter",
-                  from = "b")
+graph <- add_node(graph,
+                  node = 3,
+                  type = "number",
+                  from = 2)
 
 get_edges(graph, return_type = "vector")
-#> [1] "a -> b" "b -> c"
+#> [1] "1 -> 2" "2 -> 3"
 
-graph <- add_node(graph, node = "d",
-                  type = "letter",
-                  to = "c")
-
-get_edges(graph, return_type = "vector")
-#> [1] "a -> b" "b -> c" "d -> c"
-
-graph <- add_node(graph, node = "e",
-                  type = "letter",
-                  from = "a", to = "b")
+graph <- add_node(graph,
+                  node = 4,
+                  type = "number",
+                  to = 3)
 
 get_edges(graph, return_type = "vector")
-#> [1] "a -> b" "b -> c" "d -> c" "a -> e" "e -> b"
+#> [1] "1 -> 2" "2 -> 3" "4 -> 3"
+
+graph <- add_node(graph,
+                  node = 5,
+                  type = "number",
+                  from = 1, to = 2)
+
+get_edges(graph, return_type = "vector")
+#> [1] "1 -> 2" "2 -> 3" "4 -> 3" "1 -> 5" "5 -> 2"
 
 # There may be even multiple edges set 'to' and/or
 # 'from' the new node:
 
-graph <- add_node(graph, node = "f",
-                  type = "letter",
-                  from = c("a", "b", "c"))
+graph <- add_node(graph,
+                  node = 6,
+                  type = "number",
+                  from = 1:3)
 
 get_edges(graph, return_type = "vector")
-#> [1] "a -> b" "b -> c" "d -> c" "a -> e" "e -> b"
-#> [6] "a -> f" "b -> f" "c -> f"
+#> [1] "1 -> 2" "2 -> 3" "4 -> 3" "1 -> 5" "5 -> 2"
+#> [6] "1 -> 6" "2 -> 6" "3 -> 6"
 
-graph <- add_node(graph, node = "g",
-                  type = "letter",
-                  to = c("d", "e", "f"))
+graph <- add_node(graph,
+                  node = 7,
+                  type = "number",
+                  to = 4:6)
 
 get_edges(graph, return_type = "vector")
-#> [1] "a -> b" "b -> c" "d -> c" "a -> e" "e -> b"
-#> [6] "a -> f" "b -> f" "c -> f" "g -> d" "g -> e"
-#> [11] "g -> f"
+#> [1] "1 -> 2" "2 -> 3" "4 -> 3" "1 -> 5" "5 -> 2"
+#> [6] "1 -> 6" "2 -> 6" "3 -> 6" "7 -> 4" "7 -> 5"
+#> [11] "7 -> 6"
 
 get_nodes(graph)
-#> [1] "a" "b" "c" "d" "e" "f" "g"
+#> [1] "1" "2" "3" "4" "5" "6" "7"
 
 # Have a look at the final graph in the RStudio Viewer
 # by using the `render_graph()` function
@@ -112,34 +117,34 @@ get_nodes(graph)
 render_graph(graph, output = "visNetwork")
 
 # Notice that the edge relationship value has only been
-# added to the "a" -> "b" edge as "to_letter". While
+# added to the "1" -> "2" edge as "to_number". While
 # using `add_node()` to specify nodes and edges is
 # convenient, you cannot specify edge relationships as
 # with `add_edges()`. However, you do want to specify
-# all the rel values for all edges as "to_letter". This
+# all the rel values for all edges as "to_number". This
 # can be done with the `set_edge_attr()` function. To
 # do this unconditionally to all edges in the graph:
 
 graph <- set_edge_attr(graph,
                        edge_attr = "rel",
-                       value = "to_letter")
+                       values = "to_number")
 
 # How to check if applied? Use the `get_edge_attr()`
 # function:
 
 get_edge_attr(graph)
 #>    from to       rel
-#> 1     a  b to_letter
-#> 2     b  c to_letter
-#> 3     d  c to_letter
-#> 4     a  e to_letter
-#> 5     e  b to_letter
-#> 6     a  f to_letter
-#> 7     b  f to_letter
-#> 8     c  f to_letter
-#> 9     g  d to_letter
-#> 10    g  e to_letter
-#> 11    g  f to_letter
+#> 1     1  2 to_number
+#> 2     2  3 to_number
+#> 3     4  3 to_number
+#> 4     1  5 to_number
+#> 5     5  2 to_number
+#> 6     1  6 to_number
+#> 7     2  6 to_number
+#> 8     3  6 to_number
+#> 9     7  4 to_number
+#> 10    7  5 to_number
+#> 11    7  6 to_number
 
 # Now view the final product:
 
@@ -168,7 +173,7 @@ edge_count(graph)
 
 # The node removal:
 
-graph <- delete_node(graph, node = "f")
+graph <- delete_node(graph, node = 6)
 
 # The number of edges after node removal:
 
@@ -179,10 +184,10 @@ edge_count(graph)
 
 render_graph(graph, output = "visNetwork")
 
-# Now to remove an edge. By removing "e" -> "b" we are
+# Now to remove an edge. By removing "5" -> "2" we are
 # left with a circular graph. Here is the statement:
 
-graph <- delete_edge(graph, from = "e", to = "b")
+graph <- delete_edge(graph, from = 5, to = 2)
 
 edge_count(graph)
 #> [1] 6
