@@ -76,13 +76,19 @@ graph <-
                      to_attr = "project",
                      rel_col = "contributor_role")
 
-# Render the graph in the RStudio Viewer
+# Render the graph in the RStudio Viewer:
 
 render_graph(graph)
 
 #
-# Part 1. Using Traversals to Get Answers
+# Part 2. Using Traversals to Get Answers
 #
+
+# Now that there is a property graph, we can find out
+# bits of information without directly inspecting
+# such information. This will be important when a
+# property graph becomes quite large since manually
+# inspecting the data gets difficult and impractical.
 
 # Get the average age of all the contributors:
 
@@ -115,6 +121,10 @@ graph %>% select_nodes("name", "Louisa") %>%
   get_edge_attr_from_selection("commits", "numeric") %>%
   withdraw_values %>% sum
 #> [1] 615
+
+# As a bit of an aside, we can use selections and
+# rescale values to a styling attribute such as
+# edge width, node size, or color.
 
 # Select all edges and apply an edge `width` attribute
 # scaled by the edge attribute `commits` to a range
