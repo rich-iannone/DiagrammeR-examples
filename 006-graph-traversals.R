@@ -87,7 +87,7 @@ render_graph(graph)
 # Get the average age of all the contributors:
 
 graph %>% select_nodes("type", "person") %>%
-  get_node_attr_from_selection("age", "numeric") %>%
+  deposit_node_attr_from_selection("age", "numeric") %>%
   withdraw_values %>% mean
 #> [1] 33.6
 
@@ -95,7 +95,7 @@ graph %>% select_nodes("type", "person") %>%
 # projects:
 
 graph %>% select_edges %>%
-  get_edge_attr_from_selection("commits", "numeric") %>%
+  deposit_edge_attr_from_selection("commits", "numeric") %>%
   withdraw_values %>% sum
 #> [1] 5182
 
@@ -104,7 +104,7 @@ graph %>% select_edges %>%
 
 graph %>% select_nodes("name", "Josh") %>%
   trav_out_edge(c("maintainer", "contributer")) %>%
-  get_edge_attr_from_selection("commits", "numeric") %>%
+  deposit_edge_attr_from_selection("commits", "numeric") %>%
   withdraw_values %>% sum
 #> [1] 227
 
@@ -112,7 +112,7 @@ graph %>% select_nodes("name", "Josh") %>%
 
 graph %>% select_nodes("name", "Louisa") %>%
   trav_out_edge %>%
-  get_edge_attr_from_selection("commits", "numeric") %>%
+  deposit_edge_attr_from_selection("commits", "numeric") %>%
   withdraw_values %>% sum
 #> [1] 615
 
@@ -165,7 +165,7 @@ render_graph(graph_scale_color_edges)
 
 graph %>% select_nodes("type", "person") %>%
   select_nodes("age", ">32", "intersect") %>%
-  get_node_attr_from_selection("name") %>% withdraw_values
+  deposit_node_attr_from_selection("name") %>% withdraw_values
 #> [1] "Jack"   "Sheryl" "Roger"  "Kim"    "Jon"
 
 # Get the total number of commits from all people to
@@ -173,7 +173,7 @@ graph %>% select_nodes("type", "person") %>%
 
 graph %>% select_nodes("project", "supercalc") %>%
   trav_in_edge %>%
-  get_edge_attr_from_selection("commits", "numeric") %>%
+  deposit_edge_attr_from_selection("commits", "numeric") %>%
   withdraw_values %>% sum
 #> [1] 1676
 
@@ -181,11 +181,11 @@ graph %>% select_nodes("project", "supercalc") %>%
 
 graph %>% select_nodes("project", "supercalc") %>%
   trav_in_edge %>%
-  get_edge_attr_from_selection("commits", "numeric") %>%
+  deposit_edge_attr_from_selection("commits", "numeric") %>%
   trav_in_node %>%
   trav_in_edge("commits", max(withdraw_values(.))) %>%
   trav_out_node %>%
-  get_node_attr_from_selection("name") %>%
+  deposit_node_attr_from_selection("name") %>%
   withdraw_values
 #> [1] "Sheryl"
 
@@ -194,11 +194,11 @@ graph %>% select_nodes("project", "supercalc") %>%
 
 graph %>% select_nodes("project", "randomizer") %>%
   trav_in_edge %>%
-  get_edge_attr_from_selection("commits", "numeric") %>%
+  deposit_edge_attr_from_selection("commits", "numeric") %>%
   trav_in_node %>%
   trav_in_edge("commits", min(withdraw_values(.))) %>%
   trav_out_node %>%
-  get_node_attr_from_selection("email") %>%
+  deposit_node_attr_from_selection("email") %>%
   withdraw_values
 #> [1] "the_will@graphymail.com"
 
@@ -248,7 +248,7 @@ graph %>% select_nodes("project", "randomizer") %>%
   select_nodes("project", "supercalc") %>%
   trav_in_edge("rel", "contributor") %>%
   trav_out_node %>%
-  get_node_attr_from_selection("email", "character") %>%
+  deposit_node_attr_from_selection("email", "character") %>%
   withdraw_values
 #> [1] "lhe99@mailing-fun.com"  "josh_ch@megamail.kn"
 #> [3] "roger_that@whalemail.net"  "the_simone@a-q-w-o.net"
@@ -260,12 +260,12 @@ graph %>% select_nodes("project", "randomizer") %>%
 
 graph %>% select_nodes("project", "randomizer") %>%
   trav_in %>%
-  get_node_attr_from_selection("follower_count",
-                               "numeric") %>%
+  deposit_node_attr_from_selection("follower_count",
+                                   "numeric") %>%
   select_nodes("project", "randomizer") %>%
   trav_in("follower_count",
           max(withdraw_values(.))) %>%
-  get_node_attr_from_selection("name") %>%
+  deposit_node_attr_from_selection("name") %>%
   withdraw_values
 #> [1] "Kim"
 
@@ -275,6 +275,6 @@ graph %>% select_nodes("project", "randomizer") %>%
 graph %>%
   select_nodes_by_degree("out", ">1",
                          "type", "person") %>%
-  get_node_attr_from_selection("name") %>%
+  deposit_node_attr_from_selection("name") %>%
   withdraw_values
 #> [1] "Louisa"  "Josh"  "Kim"
