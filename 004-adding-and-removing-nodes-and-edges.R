@@ -129,10 +129,10 @@ graph <- set_edge_attr(graph,
                        edge_attr = "rel",
                        values = "to_number")
 
-# How to check if applied? Use the `get_edge_attr()`
+# How to check if applied? Use the `deposit_edge_attr()`
 # function:
 
-get_edge_attr(graph)
+deposit_edge_attr(graph)
 #>    from to       rel
 #> 1     1  2 to_number
 #> 2     2  3 to_number
@@ -151,7 +151,7 @@ get_edge_attr(graph)
 render_graph(graph, output = "visNetwork")
 
 # It should be noted that there are also analogous
-# `set_node_attr()` and `get_node_attr()` functions
+# `set_node_attr()` and `deposit_node_attr()` functions
 # that allow for setting and getting attributes for
 # nodes in a graph (or, node data frame).
 
