@@ -1,5 +1,6 @@
 # 001 # Creating a simple graph
 
+devtools::install_github("rich-iannone/DiagrammeR")
 library(DiagrammeR)
 
 #
