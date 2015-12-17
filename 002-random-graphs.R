@@ -1,5 +1,6 @@
 # 002 # Random Graphs
 
+devtools::install_github("rich-iannone/DiagrammeR")
 library(DiagrammeR)
 
 #
