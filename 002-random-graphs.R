@@ -7,7 +7,7 @@ library(DiagrammeR)
 #
 
 # Creating a random graph is actually quite useful.
-# Seeing these graph with specified numbers of nodes
+# Seeing these graphs with specified numbers of nodes
 # and edges will allow you to quickly get a sense of
 # how connected graphs can be at different sizes.
 
