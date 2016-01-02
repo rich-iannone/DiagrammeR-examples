@@ -1,5 +1,6 @@
 # 005 # Inspecting Nodes and Edges
 
+devtools::install_github("rich-iannone/DiagrammeR")
 library(DiagrammeR)
 
 #

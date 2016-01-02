@@ -1,5 +1,6 @@
 # 003 # The Node Type and The Edge Relationship
 
+devtools::install_github("rich-iannone/DiagrammeR")
 library(DiagrammeR)
 
 #
