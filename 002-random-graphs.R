@@ -69,9 +69,9 @@ render_graph(
 # Part 2. Random Yet Reproducible
 #
 
-# Setting a seed a great way to create something random
-# yet reproduce that random something for many reasons.
-# This can be done with the `create_random_graph()`
+# Setting a seed is a great way to create something
+# random yet reproduce that random something for many
+# reasons. This can be done with the `create_random_graph()`
 # function by specifying a seed number with the argument
 # `set_seed`. Here's an example
 
