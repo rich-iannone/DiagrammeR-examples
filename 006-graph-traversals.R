@@ -59,6 +59,7 @@ colnames(read.csv(projects_and_contributors_csv,
 # new graph; the `add_nodes_from_csv()` and
 # `add_edges_from_csv()` functions are used to create
 # nodes and edges in the graph.
+
 graph <-
   create_graph() %>%
   set_graph_name("software_projects") %>%
