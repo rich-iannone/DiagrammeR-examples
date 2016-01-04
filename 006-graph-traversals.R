@@ -176,7 +176,8 @@ render_graph(graph_scale_color_edges)
 
 graph %>% select_nodes("type", "person") %>%
   select_nodes("age", ">32", "intersect") %>%
-  deposit_node_attr_from_selection("name") %>% withdraw_values
+  deposit_node_attr_from_selection("name") %>%
+  withdraw_values
 #> [1] "Jack"   "Sheryl" "Roger"  "Kim"    "Jon"
 
 # Get the total number of commits from all people to
