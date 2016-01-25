@@ -8,9 +8,9 @@ library(DiagrammeR)
 #
 
 # Sometimes, you want some collection of nodes in your
-# graph to be part of a group. In such a case,specify
+# graph to be part of a group. In such a case, specify
 # a node `type`. This is easily done when creating a
-# node data frame (ndf) by using the `type` argument. 
+# node data frame (NDF) by using the `type` argument. 
 
 # Create a node data frame:
 
@@ -84,7 +84,7 @@ c(get_nodes(graph_nodes,
 
 # Edges can be provided with a grouping name as well.
 # This is the `rel` value (which short for
-# 'relationship'). Here is an example of an edf where
+# 'relationship'). Here is an example of an EDF where
 # relationship values are provided for all edges.
 
 # Create an edge data frame
