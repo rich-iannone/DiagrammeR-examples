@@ -219,13 +219,14 @@ graph %>% select_nodes("project", "randomizer") %>%
 # has made 15 new commits to that project:
 
 graph %<>% 
-  add_edge(get_nodes(.,
-                     "name", "Kim"),
-           get_nodes(.,
-                     "project", "stringbuildeR"),
-           "contributor") %>%
+  add_edge(
+    get_nodes(.,
+              "name", "Kim"),
+    get_nodes(.,
+              "project", "stringbuildeR"),
+    "contributor") %>%
   select_last_edge %>%
-  set_edge_attr_with_selection("commits", 15) %>%
+  set_edge_attr_ws("commits", 15) %>%
   clear_selection
 
 # View the graph's edf, the newest edge is at the
