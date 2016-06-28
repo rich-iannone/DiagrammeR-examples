@@ -19,21 +19,24 @@ library(DiagrammeR)
 # First, let's build a graph to use for examples:
 
 nodes <-
-  create_nodes(nodes = 1:4,
-               type = "number",
-               label = TRUE,
-               data = c(3.5, 2.6, 9.4, 2.7))
+  create_nodes(
+    nodes = 1:4,
+    type = "number",
+    label = TRUE,
+    data = c(3.5, 2.6, 9.4, 2.7))
 
 edges <-
-  create_edges(from = c(1, 2, 3, 4),
-               to = c(4, 3, 1, 1),
-               rel = c("P", "B", "L", "L"),
-               color = c("pink", "blue", "red", "red"),
-               weight = c(2.1, 5.7, 10.1, 3.9))
+  create_edges(
+    from = c(1, 2, 3, 4),
+    to = c(4, 3, 1, 1),
+    rel = c("P", "B", "L", "L"),
+    color = c("pink", "blue", "red", "red"),
+    weight = c(2.1, 5.7, 10.1, 3.9))
 
 graph <-
-  create_graph(nodes_df = nodes,
-               edges_df = edges)
+  create_graph(
+    nodes_df = nodes,
+    edges_df = edges)
 
 # Render the graph to see it in the RStudio Viewer
 
@@ -55,21 +58,17 @@ get_nodes(graph)
 # of connectness with other nodes.
 
 node_info(graph)
-#>   node label   type degree indegree outdegree loops
-#> 1    2     2 number      1        0         1     0
-#> 2    1     1 number      3        2         1     0
-#> 3    3     3 number      2        1         1     0
-#> 4    4     4 number      2        1         1     0
+#>   node label   type deg indeg outdeg loops
+#> 1    1     1 number   3     2      1     0
+#> 2    2     2 number   1     0      1     0
+#> 3    3     3 number   2     1      1     0
+#> 4    4     4 number   2     1      1     0
 
 # The `get_edges()` function returns all of the node ID
 # values related to each edge in the graph:
 
 get_edges(graph)
-#> [[1]]
-#> [1] "1" "2" "3" "4"
-#> 
-#> [[2]]
-#> [1] "4" "3" "1" "1"
+#> [1] "1 -> 4" "2 -> 3" "3 -> 1" "4 -> 1"
 
 # The `edge_info()`, like the `node_info()` function,
 # always returns a data frame with a set number of
@@ -118,7 +117,7 @@ get_edge_df(graph)
 # weight).
 
 #
-# Part 3. Determining Existence or Nodes or Edges
+# Part 3. Determining Existence of Nodes or Edges
 #
 
 # There may be cases where you need to verify that a
@@ -146,7 +145,7 @@ node_present(graph, 5)
 # To demonstrate, get the node ID values associated
 # with the edges present in the graph:
 
-get_edges(graph, return_type = "vector")
+get_edges(graph)
 #> [1] "1 -> 4" "2 -> 3" "3 -> 1" "4 -> 1"
 
 # Is the edge `1` -> `4` present?
