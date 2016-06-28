@@ -11,8 +11,10 @@ library(DiagrammeR)
 # Let's specify a collection of nodes and contain them
 # in a data frame (a node data frame -- ndf):
 
-the_nodes <- create_nodes(nodes = 1:3,
-                          label = TRUE)
+the_nodes <- 
+  create_nodes(
+    nodes = 1:3,
+    label = TRUE)
 
 # The `nodes` argument is required here and it must
 # contain a vector of node IDs, all distinct. The use
@@ -25,8 +27,10 @@ the_nodes <- create_nodes(nodes = 1:3,
 # The edge connections are also collected in a data
 # frame (this time, an edge data frame -- edf)
 
-the_edges <- create_edges(from = c(1, 1),
-                          to   = c(2, 3))
+the_edges <- 
+  create_edges(
+    from = c(1, 1),
+    to   = c(2, 3))
 
 # The `from` and `to` arguments specify which nodes the
 # the edge is outgoing and incoming, respectively. Here,
@@ -51,8 +55,10 @@ the_edges
 # If you have an ndf and an edf, you can combine those
 # into a graph object
 
-the_graph <- create_graph(nodes_df = the_nodes,
-                          edges_df = the_edges)
+the_graph <- 
+  create_graph(
+    nodes_df = the_nodes,
+    edges_df = the_edges)
 
 # That graph object is then this (important parts are
 # labeled):
@@ -119,15 +125,18 @@ render_graph(graph = the_graph, output = "visNetwork")
 # have neither (that would be an empty graph, a void...
 # a field of nothingness). Have a look:
 
-render_graph(graph = create_graph(),
-             output = "visNetwork")
+render_graph(
+  graph = create_graph(),
+  output = "visNetwork")
 
 # If you wanted to make the same graph as in Part I but
 # with one less step, just create the edf then use
 # `create_graph()`
 
-the_edges <- create_edges(from = c(1, 1),
-                          to   = c(2, 3))
+the_edges <- 
+  create_edges(
+    from = c(1, 1),
+    to   = c(2, 3))
 
 the_graph <- create_graph(edges_df = the_edges)
 
@@ -140,11 +149,12 @@ render_graph(graph = the_graph, output = "visNetwork")
 # Part 3. Just Nodes, No Edges
 #
 
-# We can just display nodes without edges (anything's
-# possible).
+# We can just display nodes without edges
 
-the_nodes <- create_nodes(nodes = 1:3,
-                          label = c("A", "B", "C"))
+the_nodes <- 
+  create_nodes(
+    nodes = 1:3,
+    label = c("A", "B", "C"))
 
 the_graph <- create_graph(nodes_df = the_nodes)
 
@@ -155,16 +165,20 @@ render_graph(graph = the_graph, output = "visNetwork")
 # `render_graph()` function calls into one big statement.
 
 render_graph(
-  create_graph(nodes_df =
-                 create_nodes(nodes = 1:26,
-                              label = LETTERS)),
+  create_graph(
+    nodes_df =
+      create_nodes(
+        nodes = 1:26,
+        label = LETTERS)),
   output = "visNetwork")
 
 # Unicode characters can also be used as labels (or node
 # ID values):
 
 render_graph(
-  create_graph(nodes_df =
-                 create_nodes(nodes = 1:3,
-                              label = c("α", "β", "γ"))),
+  create_graph(
+    nodes_df =
+      create_nodes(
+        nodes = 1:3,
+        label = c("α", "β", "γ"))),
   output = "visNetwork")
