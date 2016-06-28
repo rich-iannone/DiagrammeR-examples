@@ -15,10 +15,11 @@ library(DiagrammeR)
 # Create a node data frame:
 
 nodes_with_types <- 
-  create_nodes(nodes = 1:8,
-               type = c("X", "X", "X", "X",
-                        "Y", "Y", "Z", "Z"),
-               label = TRUE)
+  create_nodes(
+    nodes = 1:8,
+    type = c("X", "X", "X", "X",
+             "Y", "Y", "Z", "Z"),
+    label = TRUE)
 
 # Create a graph with just nodes (no edges):
 
@@ -27,8 +28,9 @@ graph_nodes <-
 
 # View the graph in the Viewer:
 
-render_graph(graph = graph_nodes,
-             output = "visNetwork")
+render_graph(
+  graph = graph_nodes,
+  output = "visNetwork")
 
 # By including type values for each of the nodes, they
 # are colored when rendered by `visNetwork` (in this
@@ -70,12 +72,15 @@ get_nodes(graph_nodes, node_attr = "type", match = "X")
 # You can also return the node IDs for nodes of several
 # `types` by combining `get_nodes()` statements:
 
-c(get_nodes(graph_nodes,
-          node_attr = "type",
-          match = "X"),
-  get_nodes(graph_nodes,
-            node_attr = "type",
-            match = "Y"))
+c(
+  get_nodes(
+    graph_nodes,
+    node_attr = "type",
+    match = "X"),
+  get_nodes(
+    graph_nodes,
+    node_attr = "type",
+    match = "Y"))
 #> [1] "1" "2" "3" "4" "5" "6"
 
 #
@@ -90,23 +95,26 @@ c(get_nodes(graph_nodes,
 # Create an edge data frame
 
 edges_with_rels <- 
-  create_edges(from = c(1, 2, 5, 7, 6, 8, 4, 4),
-               to =   c(2, 5, 8, 8, 8, 3, 3, 1),
-               rel = c("rel_a", "rel_a", "rel_b",
-                       "rel_c", "rel_b", "rel_a",
-                       "rel_b", "rel_c"))
+  create_edges(
+    from = c(1, 2, 5, 7, 6, 8, 4, 4),
+    to =   c(2, 5, 8, 8, 8, 3, 3, 1),
+    rel = c("rel_a", "rel_a", "rel_b",
+            "rel_c", "rel_b", "rel_a",
+            "rel_b", "rel_c"))
 
 # Create a graph with both nodes (with types) and
 # edges (with rels)
 
 graph_nodes_edges <-
-  create_graph(nodes_df = nodes_with_types,
-               edges_df = edges_with_rels)
+  create_graph(
+    nodes_df = nodes_with_types,
+    edges_df = edges_with_rels)
 
 # View the graph in the Viewer
 
-render_graph(graph = graph_nodes_edges,
-             output = "visNetwork")
+render_graph(
+  graph = graph_nodes_edges,
+  output = "visNetwork")
 
 # All the edges have relationships as labels!
 
@@ -132,41 +140,44 @@ edge_count(graph_nodes_edges, rel = TRUE)
 edge_count(graph_nodes_edges, rel = c("rel_a"))
 #> [1] 3 
 
-edge_count(graph_nodes_edges,
-           rel = c("rel_a", "rel_b"))
+edge_count(
+  graph_nodes_edges, rel = c("rel_a", "rel_b"))
 #> [1] 6
 
 # To identify which edges are of a particular rel, use
 # the `get_edges()` function with the `rel` supplied.
 # This function allows you have the edges returned in
 # multiple ways by use of the `return_type` argument.
-# Output can either be as a `list` (the default), as a
-# data frame (`df`), or as a `vector`.
+# Output can either be as a `vector` (the default), as a
+# data frame (`df`), or as a `list`.
 
-get_edges(graph_nodes_edges,
-          edge_attr = "rel",
-          match = "rel_a",
-          return_type = "list")
-#> [[1]]
-#> [1] "1" "2" "8"
-#> 
-#> [[2]]
-#> [1] "2" "5" "3"
+get_edges(
+  graph_nodes_edges,
+  edge_attr = "rel",
+  match = "rel_a",
+  return_type = "vector")
+#> [1] "1 -> 2" "2 -> 5" "8 -> 3"
 
-get_edges(graph_nodes_edges,
-          edge_attr = "rel",
-          match = "rel_a",
-          return_type = "df")
+get_edges(
+  graph_nodes_edges,
+  edge_attr = "rel",
+  match = "rel_a",
+  return_type = "df")
 #>   from to
 #> 1    1  2
 #> 2    2  5
 #> 3    8  3
 
-get_edges(graph_nodes_edges,
-          edge_attr = "rel",
-          match = "rel_a",
-          return_type = "vector")
-#> [1] "1 -> 2" "2 -> 5" "8 -> 3"
+get_edges(
+  graph_nodes_edges,
+  edge_attr = "rel",
+  match = "rel_a",
+  return_type = "list")
+#> [[1]]
+#> [1] "1" "2" "8"
+#> 
+#> [[2]]
+#> [1] "2" "5" "3"
 
 # Either way, you can indeed isolate those edges that
 # have certain `rel` values attached.
