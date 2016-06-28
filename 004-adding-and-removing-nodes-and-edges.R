@@ -2,6 +2,7 @@
 
 devtools::install_github("rich-iannone/DiagrammeR")
 library(DiagrammeR)
+library(magrittr)
 
 #
 # Part 1. Adding Nodes and Edges
@@ -31,80 +32,106 @@ get_nodes(graph)
 get_edges(graph)
 #> [1] NA
 
-# A graph can indeed have no edges but it's silly.
+# If you do not want or need to specify the node ID
+# values, you can simply choose not to do so; any new
+# node IDs will then be a monotonically-increasing
+# integer
+
+graph <- 
+  create_graph() %>% 
+  add_node(type = "number") %>%
+  add_node(type = "number")
+
+# This yields the same graph as previously made
+
+get_nodes(graph)
+#> [1] "1" "2"
+
 # Add a single edge with the `add_edge()` function:
 
-graph <- add_edge(graph,
-                  from = 1, to = 2,
-                  rel = "to_number")
+graph <- 
+  add_edge(
+    graph,
+    from = 1, to = 2,
+    rel = "to_number")
 
 # Now verify that the edge has been added by using
 # `get_edges()` again:
 
 get_edges(graph)
-#> [[1]]
-#> [1] "1"
-#> 
-#> [[2]]
-#> [1] "2"
+#> [1] "1 -> 2"
 
 # The `get_edges()` function can output the pairs
-# of nodes in edges either as a list (as above, it's
-# the default), as a data frame, or as a vector. Here
+# of nodes in edges either as a vector (as above, it's
+# the default), as a data frame, or as a list; here
 # are examples of the latter two output types:
 
 get_edges(graph, return_type = "df")
 #>   from to
 #> 1    1  2
 
-get_edges(graph, return_type = "vector")
-#> [1] "1 -> 2"
+get_edges(graph, return_type = "list")
+#> [[1]]
+#> [1] "1"
+#> 
+#> [[2]]
+#> [1] "2"
 
 # Nodes can also be added while specifying edges. This
 # is best shown through several examples:
 
-graph <- add_node(graph,
-                  node = 3,
-                  type = "number",
-                  from = 2)
+graph <- 
+  add_node(
+    graph,
+    node = 3,
+    type = "number",
+    from = 2)
 
-get_edges(graph, return_type = "vector")
+get_edges(graph)
 #> [1] "1 -> 2" "2 -> 3"
 
-graph <- add_node(graph,
-                  node = 4,
-                  type = "number",
-                  to = 3)
+graph <- 
+  add_node(
+    graph,
+    node = 4,
+    type = "number",
+    to = 3)
 
-get_edges(graph, return_type = "vector")
+get_edges(graph)
 #> [1] "1 -> 2" "2 -> 3" "4 -> 3"
 
-graph <- add_node(graph,
-                  node = 5,
-                  type = "number",
-                  from = 1, to = 2)
+graph <- 
+  add_node(
+    graph,
+    node = 5,
+    type = "number",
+    from = 1, to = 2)
 
-get_edges(graph, return_type = "vector")
+get_edges(graph)
 #> [1] "1 -> 2" "2 -> 3" "4 -> 3" "1 -> 5" "5 -> 2"
 
 # There may be even multiple edges set 'to' and/or
 # 'from' the new node:
 
-graph <- add_node(graph,
-                  node = 6,
-                  type = "number",
-                  from = 1:3)
+graph <- 
+  add_node(
+    graph,
+    node = 6,
+    type = "number",
+    from = 1:3)
 
-get_edges(graph, return_type = "vector")
+get_edges(graph)
 #> [1] "1 -> 2" "2 -> 3" "4 -> 3" "1 -> 5" "5 -> 2"
 #> [6] "1 -> 6" "2 -> 6" "3 -> 6"
 
-graph <- add_node(graph,
-                  node = 7,
-                  type = "number",
-                  to = 4:6)
+graph <- 
+  add_node(
+    graph,
+    node = 7,
+    type = "number",
+    to = 4:6)
 
-get_edges(graph, return_type = "vector")
+get_edges(graph)
 #> [1] "1 -> 2" "2 -> 3" "4 -> 3" "1 -> 5" "5 -> 2"
 #> [6] "1 -> 6" "2 -> 6" "3 -> 6" "7 -> 4" "7 -> 5"
 #> [11] "7 -> 6"
@@ -126,14 +153,16 @@ render_graph(graph, output = "visNetwork")
 # can be done with the `set_edge_attr()` function. To
 # do this unconditionally to all edges in the graph:
 
-graph <- set_edge_attr(graph,
-                       edge_attr = "rel",
-                       values = "to_number")
+graph <- 
+  set_edge_attr(
+    graph,
+    edge_attr = "rel",
+    values = "to_number")
 
-# How to check if applied? Use the `deposit_edge_attr()`
+# How to check if applied? Use the `get_edge_df()`
 # function:
 
-deposit_edge_attr(graph)
+get_edge_df(graph)
 #>    from to       rel
 #> 1     1  2 to_number
 #> 2     2  3 to_number
