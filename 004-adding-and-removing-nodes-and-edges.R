@@ -148,13 +148,13 @@ render_graph(graph, output = "visNetwork")
 # added to the "1" -> "2" edge as "to_number". While
 # using `add_node()` to specify nodes and edges is
 # convenient, you cannot specify edge relationships as
-# with `add_edges()`. However, you do want to specify
+# with `add_edge()`. However, you do want to specify
 # all the rel values for all edges as "to_number". This
-# can be done with the `set_edge_attr()` function. To
+# can be done with the `set_edge_attrs()` function. To
 # do this unconditionally to all edges in the graph:
 
 graph <- 
-  set_edge_attr(
+  set_edge_attrs(
     graph,
     edge_attr = "rel",
     values = "to_number")
@@ -181,7 +181,7 @@ get_edge_df(graph)
 render_graph(graph, output = "visNetwork")
 
 # It should be noted that there are also analogous
-# `set_node_attr()` and `deposit_node_attr()` functions
+# `set_node_attrs()` and `get_node_attrs()` functions
 # that allow for setting and getting attributes for
 # nodes in a graph (or, node data frame).
 
@@ -214,7 +214,7 @@ edge_count(graph)
 
 render_graph(graph, output = "visNetwork")
 
-# Now to remove an edge. By removing "5" -> "2" we are
+# Now to remove an edge. By removing `5`` -> `2` we are
 # left with a circular graph. Here is the statement:
 
 graph <- delete_edge(graph, from = 5, to = 2)

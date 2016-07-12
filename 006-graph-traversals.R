@@ -63,7 +63,7 @@ colnames(read.csv(projects_and_contributors_csv,
 graph <-
   create_graph() %>%
   set_graph_name("software_projects") %>%
-  set_global_graph_attr(
+  set_global_graph_attrs(
     "graph", "output", "visNetwork") %>%
   add_nodes_from_table(
     contributors_csv,
@@ -99,7 +99,7 @@ render_graph(graph)
 
 graph %>% 
   select_nodes("type", "person") %>%
-  cache_node_attr_ws("age", "numeric") %>%
+  cache_node_attrs_ws("age", "numeric") %>%
   get_cache %>% mean
 #> [1] 33.6
 
@@ -108,7 +108,7 @@ graph %>%
 
 graph %>% 
   select_edges %>%
-  cache_edge_attr_ws("commits", "numeric") %>%
+  cache_edge_attrs_ws("commits", "numeric") %>%
   get_cache %>% 
   sum
 #> [1] 5182
@@ -118,8 +118,8 @@ graph %>%
 
 graph %>% 
   select_nodes("name", "Josh") %>%
-  trav_out_edge(c("maintainer", "contributer")) %>%
-  cache_edge_attr_ws("commits", "numeric") %>%
+  trav_out_edge %>%
+  cache_edge_attrs_ws("commits", "numeric") %>%
   get_cache %>% 
   sum
 #> [1] 227
@@ -129,7 +129,7 @@ graph %>%
 graph %>% 
   select_nodes("name", "Louisa") %>%
   trav_out_edge %>%
-  cache_edge_attr_ws("commits", "numeric") %>%
+  cache_edge_attrs_ws("commits", "numeric") %>%
   get_cache %>% 
   sum
 #> [1] 615
@@ -145,7 +145,7 @@ graph %>%
 graph_scale_width_edges <-
   graph %>% 
   select_edges %>%
-  rescale_edge_attr_ws(
+  rescale_edge_attrs_ws(
     "commits", "width", 0.5, 3.0)
 
 # Get the edge data frame to inspect:
@@ -177,7 +177,7 @@ render_graph(graph_scale_width_edges)
 graph_scale_color_edges <-
   graph %>% 
   select_edges %>%
-  rescale_edge_attr_ws(
+  rescale_edge_attrs_ws(
     "commits", "color", "gray95", "gray5")
 
 # Render the graph, darker edges represent higher
@@ -190,7 +190,7 @@ render_graph(graph_scale_color_edges)
 graph %>% 
   select_nodes("type", "person") %>%
   select_nodes("age", ">32", "intersect") %>%
-  cache_node_attr_ws("name") %>%
+  cache_node_attrs_ws("name") %>%
   get_cache
 #> [1] "Jack"   "Sheryl" "Roger"  "Kim"    "Jon"
 
@@ -200,7 +200,7 @@ graph %>%
 graph %>% 
   select_nodes("project", "supercalc") %>%
   trav_in_edge %>%
-  cache_edge_attr_ws("commits", "numeric") %>%
+  cache_edge_attrs_ws("commits", "numeric") %>%
   get_cache %>% 
   sum
 #> [1] 1676
@@ -210,11 +210,11 @@ graph %>%
 graph %>% 
   select_nodes("project", "supercalc") %>%
   trav_in_edge %>%
-  cache_edge_attr_ws("commits", "numeric") %>%
+  cache_edge_attrs_ws("commits", "numeric") %>%
   trav_in_node %>%
   trav_in_edge("commits", max(get_cache(.))) %>%
   trav_out_node %>%
-  cache_node_attr_ws("name") %>%
+  cache_node_attrs_ws("name") %>%
   get_cache
 #> [1] "Sheryl"
 
@@ -224,11 +224,11 @@ graph %>%
 graph %>% 
   select_nodes("project", "randomizer") %>%
   trav_in_edge %>%
-  cache_edge_attr_ws("commits", "numeric") %>%
+  cache_edge_attrs_ws("commits", "numeric") %>%
   trav_in_node %>%
   trav_in_edge("commits", min(get_cache(.))) %>%
   trav_out_node %>%
-  cache_node_attr_ws("email") %>%
+  cache_node_attrs_ws("email") %>%
   get_cache
 #> [1] "the_will@graphymail.com"
 
@@ -244,7 +244,7 @@ graph %<>%
               "project", "stringbuildeR"),
     "contributor") %>%
   select_last_edge %>%
-  set_edge_attr_ws("commits", 15) %>%
+  set_edge_attrs_ws("commits", 15) %>%
   clear_selection
 
 # View the graph's edf, the newest edge is at the
@@ -280,7 +280,7 @@ graph %>%
   select_nodes("project", "supercalc") %>%
   trav_in_edge("rel", "contributor") %>%
   trav_out_node %>%
-  cache_node_attr_ws("email", "character") %>%
+  cache_node_attrs_ws("email", "character") %>%
   get_cache
 #> [1] "lhe99@mailing-fun.com"  "josh_ch@megamail.kn"
 #> [3] "roger_that@whalemail.net"  "the_simone@a-q-w-o.net"
@@ -293,11 +293,11 @@ graph %>%
 graph %>% 
   select_nodes("project", "randomizer") %>%
   trav_in %>%
-  cache_node_attr_ws(
+  cache_node_attrs_ws(
     "follower_count", "numeric") %>%
   select_nodes("project", "randomizer") %>%
   trav_in("follower_count", max(get_cache(.))) %>%
-  cache_node_attr_ws("name") %>%
+  cache_node_attrs_ws("name") %>%
   get_cache
 #> [1] "Kim"
 
@@ -306,6 +306,6 @@ graph %>%
 
 graph %>%
   select_nodes_by_degree("out", ">1") %>%
-  cache_node_attr_ws("name") %>%
+  cache_node_attrs_ws("name") %>%
   get_cache
 #> [1] "Louisa"  "Josh"  "Kim"
