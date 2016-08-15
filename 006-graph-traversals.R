@@ -144,9 +144,8 @@ graph %>%
 
 graph_scale_width_edges <-
   graph %>% 
-  select_edges %>%
-  rescale_edge_attrs_ws(
-    "commits", "width", 0.5, 3.0)
+  rescale_edge_attrs(
+    "commits", 0.5, 3.0, "width")
 
 # Get the edge data frame to inspect:
 
@@ -176,9 +175,8 @@ render_graph(graph_scale_width_edges)
 
 graph_scale_color_edges <-
   graph %>% 
-  select_edges %>%
-  rescale_edge_attrs_ws(
-    "commits", "color", "gray95", "gray5")
+  rescale_edge_attrs(
+    "commits", "gray95", "gray5", "color")
 
 # Render the graph, darker edges represent higher
 # commits:
