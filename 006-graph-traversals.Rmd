@@ -15,7 +15,7 @@ library(DiagrammeR)
 library(magrittr)
 ```
 
-The example graph to be used is a fake dataset with contributors to software projects on a platform not unlike GitHub. First, get paths to the CSV files available in the package.
+The example graph to be used is a fake dataset with contributors to software projects on a platform not unlike **GitHub**. First, get paths to the CSV files available in the package.
 
 ```{r}
 # This is a CSV file containing contributors to
@@ -80,7 +80,7 @@ graph <-
     rel_col = "contributor_role")
 ```
 
-Now that the graph object has been generated, render the graph in the RStudio Viewer:
+Now that the graph object has been generated, render the graph in the **RStudio** Viewer:
 
 ```{r}
 render_graph(graph)
@@ -135,7 +135,7 @@ As a bit of an aside, we can use selections and rescale values to a styling attr
 1. applies a rescaling of all the values in that column
 1. optionally copies those values to a new edge attribute column, retaining the original values and edge attribute
 
-Here, we will take the `commits` edge attribute and scale all values to the range 0.5 and 3.0 and use those values as the new `width` attribute (an aesthetic edge attribute that sets the width of each edge line).
+Here, we will take the `commits` edge attribute and scale all values to the range `0.5` and `3.0` and use those values as the new `width` attribute (an aesthetic edge attribute that sets the width of each edge line).
 
 ```{r}
 graph_scale_width_edges <-
@@ -156,7 +156,7 @@ Upon rendering the graph, the larger edges (and arrows) will indicate larger num
 render_graph(graph_scale_width_edges)
 ```
 
-The `rescale_edge_attrs()` also works to scale across two colors. Here we take the `commits` edge attribute as before but scale from the color `gray95` (light gray) to the color `gray5` (dark gray). The color values (represented as hexadecimal color codes) are placed in the `color` edge attribute column. Here, we'll transform the graph and also display the edf to show the values in the new `color` column. 
+The `rescale_edge_attrs()` function also works to scale across two colors. Here we take the `commits` edge attribute as before but scale from the color `gray95` (light gray) to the color `gray5` (dark gray). The color values (represented as hexadecimal color codes) are placed in the `color` edge attribute column. Here, we'll transform the graph and also display the edf to show the values in the new `color` column. 
 
 ```{r}
 graph_scale_color_edges <-
