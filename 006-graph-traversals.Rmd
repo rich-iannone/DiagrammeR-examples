@@ -9,8 +9,10 @@ Graph traversal functions are available in several general-purpose graph librari
 
 ## Part 1: Preparing the Graph
 
-Ensure that the several packages are loaded
+Ensure that the developement version of **DiagrammeR** is installed. Load in the package with `library()` and also ensure that the **magrittr** package is available.
 ```{r, results=FALSE}
+devtools::install_github("rich-iannone/DiagrammeR")
+
 library(DiagrammeR)
 library(magrittr)
 ```
