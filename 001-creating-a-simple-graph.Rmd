@@ -3,13 +3,12 @@ title: "001 - Creating a Simple Graph"
 output: html_notebook
 ---
 
-## Introduction
-
 **DiagrammeR** is all about making it easy to create, modify, and analyze graphs in an **R** environment. When just starting to use the package, it's useful to learn how to generate and view simple graphs. Here, we'll use just a few functions to generate node and edge data frames (i.e., graph building blocks), to create the graph object, and to view the graph.
 
-## Part 1. Loading in Packages
+## Setup
 
 Ensure that the developement version of **DiagrammeR** is installed. Load in the package with `library()` and also ensure that the **magrittr** package is available.
+
 ```{r, results=FALSE}
 devtools::install_github("rich-iannone/DiagrammeR")
 
@@ -17,7 +16,7 @@ library(DiagrammeR)
 library(magrittr)
 ```
 
-## Part 2. Creating a Simple Graph Using Data Frames
+## Part 1. Creating a Simple Graph Using Data Frames
 
 For graph diagrams you need nodes and edges. Let's use the `create_node_df()` function specify a collection of nodes and contain them in a data frame (a node data frame, or ndf). Immediately after that, inspect the node data frame.
 
@@ -94,7 +93,6 @@ render_graph(graph = the_graph, output = "vivagraph")
 render_graph(graph = the_graph, output = "visNetwork")
 ```
 
-
 ## Part 2. A Shortcut to the Same Graph
 
 You don't really need to have a node data frame in conjunction with the edge data frame to make a graph object. You can have both, either of them, or neither of them (creating an empty graph). Here is the empty graph case:
@@ -118,7 +116,7 @@ the_graph <- create_graph(edges_df = edf)
 # The graph should be similar, but, the node `type`
 # hasn't been set (so no coloring of two different
 # groups of nodes)
-render_graph(graph = the_graph, output = "visNetwork")
+render_graph(graph = the_graph)
 ```
 
 ## Part 3. Graph with Nodes but No Edges
@@ -136,7 +134,7 @@ ndf <-
 the_graph <- create_graph(nodes_df = ndf)
 
 # View the graph
-render_graph(graph = the_graph, output = "visNetwork")
+render_graph(graph = the_graph)
 ```
 
 Here is an example with 26 nodes, this time wrapping the `create_nodes()`, `create_graph()`, and `render_graph()` function calls into one big statement.
@@ -147,8 +145,7 @@ render_graph(
     nodes_df =
       create_node_df(
         n = 26,
-        label = LETTERS)),
-  output = "visNetwork")
+        label = LETTERS)))
 ```
 
 Unicode characters can also be used as `label` attribute values:
@@ -159,8 +156,7 @@ render_graph(
     nodes_df =
       create_node_df(
         n = 3,
-        label = c("α", "β", "γ"))),
-  output = "visNetwork")
+        label = c("α", "β", "γ"))))
 ```
 
 Nesting calls like becomes less readable with increasing numbers of operations. **DiagrammeR** works very well with the **magrittr** package to allow forward-piping of graph operations with the `%>%` operator. Here is the same set of functions as above, except using `%>%` to chain the operations left to right:
@@ -169,7 +165,7 @@ Nesting calls like becomes less readable with increasing numbers of operations. 
 create_node_df(
   n = 3, label = c("α", "β", "γ")) %>%
   create_graph(nodes_df = .) %>%
-  render_graph(output = "visNetwork")
+  render_graph
 ```
 
 The `.` character in the `create_graph()` statement indicates that the returned output from the previous `create_node_df()` statement should go here. Otherwise, the default behavior is that the output from a statement becomes the value for the first argument (which is often omitted entirely). The functions in **DiagrammeR** are designed to have this forward-pipe pattern work well. With further examples, you'll see how this can make even complicated graph operations easy to compose and to read.
