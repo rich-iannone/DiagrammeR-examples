@@ -84,13 +84,12 @@ graph <-
 ```
 
 Now that the graph object has been generated, render the graph in the **RStudio** Viewer:
-
 ```{r}
 render_graph(graph)
 ```
 ## Part 2. Querying the Graph to Get Answers
 
-Now that we have a property graph, we can find out bits of information without directly inspecting such information (i.e., not working with the graph's internal node or edge data frames). This will be important when a property graph becomes larger or more complex since manual work with these data frames gets difficult and impractical.
+Now that we have a property graph, we can find out bits of information without directly inspecting such information (i.e., not working with the graph's internal node or edge data frames). This will be important when a property graph becomes larger or more complex since manual work these data frames gets difficult and impractical.
 
 We can get the average age of all the contributors. We do this by first selecting all nodes of the `type` that is `person`. Then, for these selected nodes, we cache the node attribute corresponding to `age`. The cache is retained in the graph object. The next steps are to retrieve the cache with `get_cache()` and pass that numeric vector to the `mean()` function.
 
@@ -149,6 +148,7 @@ graph %>%
 ```
 
 As a bit of an aside, we can use selections and rescale values to a styling attribute such as edge width, node size, or color. In this example, we can use the `rescale_edge_attrs()` function. It does a few things at once:
+
 1. selects an entire column for an edge attribute in the graph's edge data frame
 1. applies a rescaling of all the values in that column
 1. optionally copies those values to a new edge attribute column, retaining the original values and edge attribute
