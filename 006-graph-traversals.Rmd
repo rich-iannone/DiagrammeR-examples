@@ -3,19 +3,20 @@ title: "006 - Graph Traversals"
 output: html_notebook
 ---
 
-## Introduction
-
 Graph traversal functions are available in several general-purpose graph libraries and in graph database technologies. Once their use is understood, they are extremely useful for getting the particular data you need from a property graph (a graph with labeled nodes and edges using the `type` and `rel` attributes, respectively). Forward-pipe operations using the **magrittr** `%>%` operator are indispensible here as they make such traversal operations (and concurrent data gathering) much easier to reason about.
 
-## Part 1: Preparing the Graph
+## Setup
 
 Ensure that the developement version of **DiagrammeR** is installed. Load in the package with `library()` and also ensure that the **magrittr** package is available.
+
 ```{r, results=FALSE}
 devtools::install_github("rich-iannone/DiagrammeR")
 
 library(DiagrammeR)
 library(magrittr)
 ```
+
+## Part 1. Preparing the Graph
 
 The example graph to be used is a fake dataset with contributors to software projects on a platform not unlike **GitHub**. First, get paths to the CSV files available in the package.
 
@@ -87,9 +88,9 @@ Now that the graph object has been generated, render the graph in the **RStudio*
 ```{r}
 render_graph(graph)
 ```
-## Part 2. Using Traversals to Get Answers
+## Part 2. Querying the Graph to Get Answers
 
-Now that there is a property graph, we can find out bits of information without directly inspecting such information. This will be important when a property graph becomes quite large since manually inspecting the data gets difficult and impractical.
+Now that we have a property graph, we can find out bits of information without directly inspecting such information (i.e., not working with the graph's internal node or edge data frames). This will be important when a property graph becomes larger or more complex since manual work with these data frames gets difficult and impractical.
 
 We can get the average age of all the contributors. We do this by first selecting all nodes of the `type` that is `person`. Then, for these selected nodes, we cache the node attribute corresponding to `age`. The cache is retained in the graph object. The next steps are to retrieve the cache with `get_cache()` and pass that numeric vector to the `mean()` function.
 
@@ -99,7 +100,7 @@ graph %>%
   cache_node_attrs_ws("age", "numeric") %>%
   get_cache %>% mean
 ```
-The average age is 33.6 years.
+The average age is `33.6` years.
 
 To get the total number of commits to all software projects, follow a similar strategy of selecting all edges with `select_edges()`. Cache all of the values for the edge attribute `commits`. Get the cache as a vector with `get_cache()` and compute the sum of those values.
 
@@ -110,6 +111,21 @@ graph %>%
   get_cache %>% 
   sum
 ```
+
+## Part 3. Using Traversals to Get Answers
+
+The traversal functions in **DiagrammeR** are all named as `trav_...()` and their naming indicates the type of traversal. In essence, a traversal will modify a graph selection by taking into account the current selection (either of nodes or edges), performing a traversal with the selection, and creating a new selection of nodes or edges for the successful traversals. Here is a summary that explains what each of the traversal functions does.
+
+| traversal function | type of traversal | description |
+|--------------------|-------------------|-------------|
+| `trav_out()`       | node to node      | move from a node across any outbound edge(s) to node(s) |
+| `trav_in()`        | node to node      | move from a node across any inbound edge(s) to node(s) |
+| `trav_both()`      | node to node      | move from a node across any inbound or outbound edge(s) to node(s) |
+| `trav_out_edge()`  | node to edge      | move from a node to outbound edge(s)
+| `trav_in_edge()`   | node to edge      | move from a node to inbound edge(s)
+| `trav_out_node()`  | edge to node      | move from an edge to the node where the edge is outbound
+| `trav_in_node()`   | edge to node      | move from an edge to the node where the edge is inbound
+
 Now it is time to use traversals to get more specific information from the graph. If we were to get the total number of commits from Josh, we can first select the node for Josh using `select_nodes()` and specifying that the `name` attribute should have the value `Josh`. Commits are values that exist on the graph's edges, so, we must traverse from the single node (that is, the current node selection) onto any outbound edges. This is done with the `trav_out_edge()` function, and using it will modify the selection to now contain any of those edges directed out of the node.
 
 ```{r}
