@@ -1,0 +1,187 @@
+---
+title: "003 - The Node Type and the Edge Relationship"
+output: html_notebook
+---
+
+Sometimes, you want some collection of nodes in your graph to be part of a group. In such a case, we specify a node attribute called `type`. Edges can be provided with a grouping name as well. This is with the `rel` edge attribute (which is short for 'relationship').
+
+## Setup
+
+Ensure that the developement version of **DiagrammeR** is installed. Load in the package with `library()` and also ensure that the **magrittr** package is available.
+
+```{r, results=FALSE}
+devtools::install_github("rich-iannone/DiagrammeR")
+
+library(DiagrammeR)
+library(magrittr)
+```
+
+## Part 1. The Node `type` Attribute
+
+When creating a node data frame, we easily apply groupings for nodes by supplying values for the `type` argument. 
+
+```{r}
+# Create a node data frame with 8 nodes, and
+# assign several `type` values and unique
+# `label` values
+ndf <- 
+  create_node_df(
+    n = 8,
+    type = c("X", "X", "X", "X",
+             "Y", "Y", "Z", "Z"),
+    label = c("dfs", "udd", "wkd", "xkd",
+              "qpx", "mdj", "ldk", "wjq"))
+
+# View the node data frame
+ndf
+```
+
+```{r}
+# Create a graph with just nodes (no edges):
+graph <-
+  create_graph(nodes_df = ndf)
+
+graph %>% render_graph(output = "visNetwork")
+```
+
+By assigning `type` values for each of the nodes, they are automatically colored when rendered by `visNetwork` (in this case blue, yellow, and red for types 'X', 'Y', and 'Z') and this is quite convenient.
+
+There is a function that allows you to get a count of all nodes, or, counts of nodes with specific `type` values: the `node_count()` function. To get a count of all nodes, simply pass the graph object to `node_count()`. The graph object can be provided to `node_count()` with a **magrittr** `%>%`.
+
+```{r}
+graph %>% node_count
+```
+
+To get a count of nodes grouped by `type`, use `type = TRUE`. A named vector will be returned (where the names are the `type` values).
+
+```{r}
+graph %>% node_count(type = TRUE)
+```
+
+To get a count of nodes of a specific type, use the `type` argument again but this time supply the `type` value(s).
+
+```{r}
+# Get a count of nodes of type `X`
+graph %>% node_count(type = "X")
+
+# Get a total count of nodes of the
+# `X` and `Y` types
+graph %>% node_count(type = c("X", "Y"))
+```
+
+To identify which nodes are of a specific type, use the `get_node_ids()` function with `type` supplied to the `node_attr` argument and also supply `X` to the `match` argument. This returns a vector of node ID values.
+
+```{r}
+graph %>% get_node_ids(node_attr = "type", match = "X")
+```
+
+You can also return the node IDs for nodes of several `types` by combining `get_node_ids()` statements with `c()`.
+
+```{r}
+graph %>%
+{
+  c(
+    get_node_ids(.,
+                 node_attr = "type",
+                 match = "X"),
+    get_node_ids(.,
+                 node_attr = "type",
+                 match = "Y")
+  )
+}
+```
+
+## Part 2. The `edge` Relationship
+
+The analogue to `type` for edges is the `rel` attribute. Here is an example of an edge data frame where relationship values are provided for all edges.
+
+```{r}
+# Create an edge data frame
+edf <- 
+  create_edge_df(
+    from = c(1, 2, 5, 7, 6, 8, 4, 4),
+    to =   c(2, 5, 8, 8, 8, 3, 3, 1),
+    rel = c("rel_a", "rel_a", "rel_b",
+            "rel_c", "rel_b", "rel_a",
+            "rel_b", "rel_c"))
+
+# View the edge data frame
+edf
+```
+
+Create a graph object that contains nodes with `type` attrs and edges with `rel` attrs, and, view the graph in the Viewer.
+
+```{r}
+# Create the graph using the
+# ndf and edf objects
+graph <-
+  create_graph(
+    nodes_df = ndf,
+    edges_df = edf)
+
+# Render the graph
+graph %>% render_graph(output = "visNetwork")
+```
+
+
+As can be seen, all the edges have `rel` values displayed when using `output = "visNetwork"`.
+
+The edge analogue to `node_count()` is `edge_count()` and this function allows you to get counts of all edges or those edges by relationship. To get a count of all edges, simply pass the graph to `edge_count()`.
+
+```{r}
+edge_count(graph)
+```
+
+By default, the `rel` argument is set to `FALSE` and that provides a total count of edges. Setting `rel` to `TRUE` yields a named vector of edge counts by relationship.
+
+```{r}
+edge_count(graph, rel = TRUE)
+```
+
+Again, as with `node_count()`, one or more specified `rel` values can be used to determine the number of matching edges.
+
+```{r}
+# Get a count of edges of with rel `rel_a`
+edge_count(graph, rel = c("rel_a"))
+
+# Get a total count of nodes of the
+# `rel_a` and `rel_b` edges
+edge_count(
+  graph, rel = c("rel_a", "rel_b"))
+```
+
+To identify which edges are of a particular rel, use the `get_edges()` function with the `rel` supplied. This function allows you have the edges returned in multiple ways by use of the `return_type` argument. Output can either be as a `vector` (the default), as a data frame (`df`), or as a `list`.
+
+```{r}
+get_edges(
+  graph,
+  edge_attr = "rel",
+  match = "rel_a",
+  return_type = "vector")
+```
+
+```{r}
+get_edges(
+  graph,
+  edge_attr = "rel",
+  match = "rel_a",
+  return_type = "df")
+```
+
+```{r}
+get_edges(
+  graph,
+  edge_attr = "rel",
+  match = "rel_a",
+  return_type = "list")
+```
+
+Either way, you can indeed isolate those edges that have certain `rel` values attached.
+
+
+
+
+
+
+
+
