@@ -1,0 +1,71 @@
+---
+title: "002 - Random Graphs"
+output: html_notebook
+---
+
+Creating a randomized graph is actually quite useful. Seeing these graphs with specified numbers of nodes and edges will allow you to quickly get a sense of how connected graphs can be at different sizes.
+
+## Setup
+
+Ensure that the developement version of **DiagrammeR** is installed. Load in the package with `library()` and also ensure that the **magrittr** package is available.
+
+```{r, results=FALSE}
+devtools::install_github("rich-iannone/DiagrammeR")
+
+library(DiagrammeR)
+library(magrittr)
+```
+
+## Part 1. Random Graphs with `create_random_graph()`
+
+The `create_random_graph()` function is provided in **DiagrammeR** with several options for creating random graphs. In all of the examples, the function will pipe the graph object to the `render_graph()` function (using the **magrittr** `%>%` operator) with the `output = "visNetwork"` option set. This is useful for quickly inspecting the graph upon creation.
+
+To start, we can create a not-so-random graph with 2 nodes (`n` argument) and 1 edge (`m` argument). By default, the graph produced is an undirected graph.
+
+```{r}
+create_random_graph(n = 2, m = 1) %>% render_graph
+```
+
+It's obviously better to make a graph with more nodes and edges. Next, we will create a random graph with 15 nodes and 30 edges:
+
+```{r}
+create_random_graph(n = 15, m = 30) %>% render_graph
+```
+
+In all of the random graphs created with this function, there is only one edge created for each pair of nodes (i.e., no cases with multiple edges between nodes).
+
+If you specify a number of edges that exceeds the number in a fully-connected graph of size `n`, you get an error. It's an informative error (providing the maximum number of edges `m` for the given `n`) but it's an error nonetheless.
+
+```{r}
+create_random_graph(n = 15, m = 200) %>% render_graph
+```
+
+So, using `n = 15` and `m = 105` will yield a fully-connected graph with 15 nodes:
+
+```{r}
+create_random_graph(n = 15, m = 105) %>% render_graph
+```
+
+Alternatively, you don't need to have edges in the randomly generated graph. Simply specify `m = 0` for any number of nodes `n`:
+
+```{r}
+create_random_graph(n = 512, m = 0) %>% render_graph
+```
+
+# Part 2. Random Yet Reproducible
+
+Setting a seed is a great way to create something random yet reproduces that random something later use. This can be done within the `create_random_graph()` function by specifying a seed number with the argument `set_seed`. Here's an example
+
+```{r}
+create_random_graph(n = 4, m = 4, set_seed = 30) %>% render_graph
+```
+
+Upon repeat runs, the connections in the graph will be the same each and every time (e.g., node `1` is attached to all other nodes, `2` is connected to `1`, etc.).
+
+## Part 3. Directed/Undirected Randomness
+
+By default, the random graphs generated are undirected. To produce directed graphs, simply include `directed = TRUE` in the `create_random_graph()` statement.
+
+```{r}
+create_random_graph(n = 15, m = 22, directed = TRUE) %>% render_graph
+```
