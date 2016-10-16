@@ -1,0 +1,131 @@
+---
+title: "005 - Inspecting Nodes and Edges"
+output: html_notebook
+---
+
+## Setup
+
+Ensure that the developement version of **DiagrammeR** is installed. Load in the package with `library()` and also ensure that the **magrittr** package is available.
+
+```{r, results=FALSE}
+devtools::install_github("rich-iannone/DiagrammeR")
+
+library(DiagrammeR)
+library(magrittr)
+```
+
+## Part 1. Information on All Nodes and Edges
+
+When you have a graph object, sometimes you'll want to poke around and inspect some of the nodes, and some of the edges. There are very good reasons for doing so. There can be valuable information within the nodes and edges. Further graph construction may hinge on what's extant in the graph. Also, inspection is a good way to verify that a graph modification has indeed taken place in the correct manner.
+
+First, let's build a graph to use for the examples. For the node data frame we will include values for the `type`, `label`, and `data` attributes. The edge data frame will contain the `rel`, `color`, and `weight` edge attributes.
+
+```{r}
+# Create a node data frame (ndf) with
+# 4 nodes
+ndf <-
+  create_node_df(
+    n = 4,
+    type = "number",
+    label = c("one", "two",
+              "three", "four"),
+    data = c(3.5, 2.6, 9.4, 2.7))
+
+# Create an edge data frame (ndf) with
+# 4 edges
+edf <-
+  create_edge_df(
+    from = c(1, 2, 3, 4),
+    to = c(4, 3, 1, 1),
+    rel = c("P", "B", "L", "L"),
+    color = c("pink", "blue", "red", "red"),
+    weight = c(2.1, 5.7, 10.1, 3.9))
+
+graph <-
+  create_graph(
+    nodes_df = ndf,
+    edges_df = edf)
+
+# Render the graph to see it in the RStudio Viewer
+render_graph(graph, output = "visNetwork")
+```
+
+The `get_node_ids()` function simply returns a vector of node ID values. This is useful in many cases and is great when used as a sanity check.
+
+```{r}
+get_node_ids(graph)
+```
+
+Using the `node_info()` function provides a data frame with detailed information on nodes and their interrelationships within a graph. It always returns the same columns, in the same order. It returns as many rows as there are nodes in the graph. It's useful when you want a quick summary of the node ID values, their labels and `type` values, and their degrees of connectness with other nodes.
+
+```{r}
+node_info(graph)
+```
+
+In the above table the base attributes of the nodes are provided first (`id`, `type`, and `label`) and then columns with degree information comes next (`deg`, `indeg`, and `outdeg`). The node degree (`deg`) describes the number of edges to or from the node. The indegree and outdegree divide total degree amount by the number of edges inward to the node and outward from the node, respectively. Finally, the `loops` column provides the number of self edges for the node (this is an edge that starts and terminates at the same node, so the degree for that is 2).
+
+The `get_edges()` function returns all of the node ID values related to each edge in the graph:
+
+```{r}
+get_edges(graph)
+```
+
+The `edge_info()`, like the `node_info()` function, always returns a data frame with a set number of columns. In this case, it is the node ID values `from` and `to`, and, the relationship (`rel`) for the edges.
+
+```{r}
+edge_info(graph)
+```
+
+## Part 2. Inspecting Nodes, Edges, and their Attributes
+
+A graph object's main components are its node data frame (ndf) and its edge data frame (edf). These can be viewed individually using the `get_node_df()` and `get_edge_df()` functions:
+
+```{r}
+get_node_df(graph)
+```
+
+```{r}
+get_edge_df(graph)
+```
+
+For the ndf, the `id`, `type`, and `label` columns are always present and they are always in that prescribed order. For the edf, it is the `from`, `to`, and `rel` columns that are always present. Any additional columns are either parameters recognized by the graph rendering engine (e.g., `color`, `fontname`, etc.) or are direct properties of the nodes or edges (e.g., a node data value or an edge weight).
+
+## Part 3. Determining Existence of Nodes or Edges
+
+There may be cases where you need to verify that a certain node ID exists in the graph or that an  edge definition has been made. The `node_present()` and `edge_present()` will provide a `TRUE` or `FALSE` value.
+
+Get the node ID values present in the graph:
+
+```{r}
+get_node_ids(graph)
+```
+
+Is node with ID `1` in the graph?
+
+```{r}
+node_present(graph, 1)
+```
+
+Is node with ID `5` in the graph?
+```{r}
+node_present(graph, 5)
+```
+
+Get the node ID values associated with the edges present in the graph:
+
+```{r}
+get_edges(graph)
+```
+
+Is the edge `1` -> `4` present?
+
+```{r}
+edge_present(graph, 1, 4)
+```
+
+Is the edge `2` -> `4` present?
+
+```{r}
+edge_present(graph, 2, 4)
+```
+
