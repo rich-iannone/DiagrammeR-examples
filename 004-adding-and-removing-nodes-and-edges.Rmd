@@ -1,0 +1,248 @@
+---
+title: "004 - Adding and Removing Nodes and Edges"
+output: html_notebook
+---
+
+In a previous example notebook, it was demonstrated that creating node data frames and edge data frames was a viable strategy for building a graph. That pattern is useful for bulk additions of connected nodes as first step. Another means to compose a graph is to initialize an empty or partially-populated graph and add nodes individually, incorporating edges either during node addition or as separate operations. This is useful when data is collected slowly over time (e.g., through periodic data collections) and you'd like to update the graph with recent data. The notebook will demonstrate primarily how to add nodes and edges to a graph, and, how to remove them.
+
+## Setup
+
+Ensure that the developement version of **DiagrammeR** is installed. Load in the package with `library()` and also ensure that the **magrittr** package is available.
+
+```{r, results=FALSE}
+devtools::install_github("rich-iannone/DiagrammeR")
+
+library(DiagrammeR)
+library(magrittr)
+```
+
+## Part 1. Adding Nodes and Edges
+
+First, create an empty graph. Sometimes it's good to start with an empty slate:
+
+```{r}
+graph <- create_graph()
+```
+
+You can add individual nodes to a graph by using the `add_node()` function. Let's add two nodes in the most minimal fashion:
+
+```{r}
+graph <- add_node(graph)
+graph <- add_node(graph)
+```
+
+This creates 2 nodes with ID values `1` and `2` (ID values are set for you as auto-incrementing integers). We can use both the `get_node_ids()` and `get_node_df()` functions to verify that the nodes had been added.
+
+```{r}
+get_node_ids(graph)
+```
+
+```{r}
+get_node_df(graph)
+```
+
+Likewise we can make sure that no edges are in the graph by using the `get_edges()` function. A graph with no edges will return `NA`.
+
+```{r}
+get_edges(graph)
+```
+
+With the **magrittr** approach, we can create the same graph by chaining graph functions with the `%>%` operator. The graph object will be passed as the value for the first argument in each step.
+
+```{r}
+# Create the equivalent `graph` object
+# as before but use `%>%` to chain
+# expressions together
+graph <-
+  create_graph() %>%
+  add_node %>%
+  add_node
+
+# Verify that the graph contains 2 nodes
+get_node_ids(graph)
+```
+
+Note that using the default values for `type` or `label` in each `add_node()` call, we don't get values for the `type` attribute and the `label` attribute is assigned the node ID value. In the ideal case, values for `type` and `label` are supplied. Something to keep in mind is that including `label` values that are unique or distinct across all nodes in the graph will make it possible to specify node selections and perform useful actions on specific nodes. Let's create the `graph` object once more with `type` and `label` node attributes included.
+
+```{r}
+graph <- 
+  create_graph() %>% 
+  add_node(type = "number", label = "one") %>%
+  add_node(type = "number", label = "two")
+```
+
+View the graph's internal node data frame to see that these attributes have been included.
+
+```{r}
+get_node_df(graph)
+```
+
+Adding a single edge is possible with the `add_edge()` function. Let's add a single, directed edge between nodes `1` and `2`. This edge with also be given a value for its `rel` attribute. Immediately after modifying the graph, use the `get_edges()` function to show that the edge has been produced.
+
+```{r}
+graph <- 
+  graph %>%
+  add_edge(
+    from = 1, to = 2,
+    rel = "to_number")
+
+graph %>% get_edges
+```
+
+The `get_edges()` function can output the pairs of nodes in edges either as a vector (as above, it's the default), as a data frame, or as a list; here are examples of the latter two output types:
+
+```{r}
+get_edges(graph, return_type = "df")
+```
+
+```{r}
+get_edges(graph, return_type = "list")
+```
+
+Nodes additions and edge creation can also be done in a single `add_node()` step. You can use either (or both) of the `from` and `to` arguments. This is best demonstrated through several examples.
+
+```{r}
+# Add node with ID `3` and the
+# edge `2` -> `3`
+graph <- 
+  graph %>%
+  add_node(
+    type = "number",
+    label = "three",
+    from = 2)
+
+get_edges(graph)
+```
+
+```{r}
+# Add node with ID `4` and the
+# edge `4` -> `3`
+graph <- 
+  graph %>%
+  add_node(
+    type = "number",
+    label = "four",
+    to = 3)
+
+get_edges(graph)
+```
+
+```{r}
+# Add node with ID `5` and the
+# edges `1` -> `5` and `5` -> `2`
+graph <-
+  graph %>%
+  add_node(
+    type = "number",
+    label = "five",
+    from = 1, to = 2)
+
+get_edges(graph)
+```
+
+There may be even multiple edges set as `to` and/or `from` values.
+
+```{r}
+# Add node with ID `6` and the
+# edges `1` -> `6`,  `2` -> `6`,
+# and `3` -> `6`
+graph <- 
+  graph %>%
+  add_node(
+    type = "number",
+    label = "six",
+    from = 1:3)
+
+get_edges(graph)
+```
+
+```{r}
+# Add node with ID `7` and the
+# edges `7` -> `4`,  `7` -> `5`,
+# and `7` -> `6`
+graph <-
+  graph %>%
+  add_node(
+    type = "number",
+    label = "seven",
+    to = 4:6)
+
+get_edges(graph)
+```
+
+Have a look at the final graph in the RStudio Viewer by using the `render_graph()` function.
+
+```{r}
+render_graph(graph, output = "visNetwork")
+```
+
+Notice that the edge relationship value has only been added to the `1 -> 2` edge as `to_number`. While using `add_node()` to specify nodes and edges is convenient, you cannot specify edge relationships as with `add_edge()`. However, you do want to specify all the rel values for all edges as `to_number`. This can be done with the `set_edge_attrs()` function. To do this unconditionally to all edges in the graph:
+
+```{r}
+graph <-
+  graph %>%
+  set_edge_attrs(
+    edge_attr = "rel",
+    values = "to_number")
+```
+
+To verify that the change was applied, use the `get_edge_df()` function to output the graph's internal edge data frame.
+
+```{r}
+get_edge_df(graph)
+```
+
+Alternatively, use the `get_edge_attrs()` to verify. By supplying the graph object and the name of the edge attribute (`rel`), we get a named vector of edge attribute values (where the names are the edges in the format [id] -> [id]).
+
+```{r}
+get_edge_attrs(graph, edge_attr = "rel")
+```
+
+View the graph again to see that all edges are labeled with the `to_number` `rel` edge attribute.
+
+```{r}
+render_graph(graph, output = "visNetwork")
+```
+
+It should be noted that there are also analogous `set_node_attrs()` and `get_node_attrs()` functions that allow for setting and getting attributes for nodes in a graph (or, in a node data frame).
+
+## Part 2. Removing Nodes and Edges
+
+Nodes and edges can just as easily be taken away. The key functions here are `delete_node()` and `delete_edge()`. Removing a node also removes all edges to and from that node. For sake of example, let's remove the node with the ID `6` which is one of the more highly connected nodes in the graph.
+
+
+```{r}
+# Get the number of edges before node removal
+edge_count(graph)
+
+# Remove node `6` from the graph
+graph <- delete_node(graph, node = 6)
+
+# Get the number of edges before after removal
+edge_count(graph)
+```
+
+View the revised graph to see the change.
+
+```{r}
+render_graph(graph, output = "visNetwork")
+```
+
+To remove a single edge we use `delete_edge()` By removing the edge `5 -> 2` we are left with a circular graph. Here we will get an edge count before the edge removal, remove the edge, then get another count of edges.
+
+```{r}
+# Get the number of edges before edge removal
+edge_count(graph)
+
+# Remove edge `5` -> `2` from the graph
+graph <- delete_edge(graph, from = 5, to = 2)
+
+# Get the number of edges after edge removal
+edge_count(graph)
+```
+
+View the graph again and note that no nodes were removed. The `delete_edge()` function never removes nodes. We do get that cycle graph, as promised. 
+
+```{r}
+render_graph(graph, output = "visNetwork")
+```
