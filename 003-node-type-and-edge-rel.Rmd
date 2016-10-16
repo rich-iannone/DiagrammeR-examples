@@ -178,10 +178,3 @@ get_edges(
 
 Either way, you can indeed isolate those edges that have certain `rel` values attached.
 
-
-
-
-
-
-
-
