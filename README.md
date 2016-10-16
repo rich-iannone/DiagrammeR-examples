@@ -1,6 +1,6 @@
-# DiagrammeR Examples
+## DiagrammeR Examples
 
-A collection of DiagrammeR example files.
+A collection of **DiagrammeR** examples as **RNotebook** documents. Simply get the files and run them in a recent version of **RStudio**.
 
  | Title
 ---|:--
