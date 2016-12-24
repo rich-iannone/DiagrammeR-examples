@@ -7,13 +7,12 @@ Sometimes, you want some collection of nodes in your graph to be part of a group
 
 ## Setup
 
-Ensure that the developement version of **DiagrammeR** is installed. Load in the package with `library()` and also ensure that the **magrittr** package is available.
+Ensure that the developement version of **DiagrammeR** is installed. Load in the package with `library()`.
 
 ```{r, results=FALSE}
-devtools::install_github("rich-iannone/DiagrammeR")
+# devtools::install_github("rich-iannone/DiagrammeR")
 
 library(DiagrammeR)
-library(magrittr)
 ```
 
 ## Part 1. The Node `type` Attribute
@@ -36,7 +35,7 @@ ndf <-
 ndf
 ```
 
-```{r}
+```{r render_graph_nodes}
 # Create a graph with just nodes (no edges):
 graph <-
   create_graph(nodes_df = ndf)
@@ -48,19 +47,19 @@ By assigning `type` values for each of the nodes, they are automatically colored
 
 There is a function that allows you to get a count of all nodes, or, counts of nodes with specific `type` values: the `node_count()` function. To get a count of all nodes, simply pass the graph object to `node_count()`. The graph object can be provided to `node_count()` with a **magrittr** `%>%`.
 
-```{r}
+```{r get_node_count}
 graph %>% node_count
 ```
 
 To get a count of nodes grouped by `type`, use `type = TRUE`. A named vector will be returned (where the names are the `type` values).
 
-```{r}
+```{r get_node_count_type}
 graph %>% node_count(type = TRUE)
 ```
 
 To get a count of nodes of a specific type, use the `type` argument again but this time supply the `type` value(s).
 
-```{r}
+```{r get_node_count_type_x_y}
 # Get a count of nodes of type `X`
 graph %>% node_count(type = "X")
 
@@ -71,23 +70,17 @@ graph %>% node_count(type = c("X", "Y"))
 
 To identify which nodes are of a specific type, use the `get_node_ids()` function with `type` supplied to the `node_attr` argument and also supply `X` to the `match` argument. This returns a vector of node ID values.
 
-```{r}
-graph %>% get_node_ids(node_attr = "type", match = "X")
+```{r get_node_ids}
+graph %>% get_node_ids("type == 'X'")
 ```
 
 You can also return the node IDs for nodes of several `types` by combining `get_node_ids()` statements with `c()`.
 
-```{r}
-graph %>%
+```{r get_node_ids_c}
+graph %>% 
 {
-  c(
-    get_node_ids(.,
-                 node_attr = "type",
-                 match = "X"),
-    get_node_ids(.,
-                 node_attr = "type",
-                 match = "Y")
-  )
+  c(get_node_ids(., "type == 'X'"),
+    get_node_ids(., "type == 'Y'"))
 }
 ```
 
@@ -95,7 +88,7 @@ graph %>%
 
 The analogue to `type` for edges is the `rel` attribute. Here is an example of an edge data frame where relationship values are provided for all edges.
 
-```{r}
+```{r create_edf}
 # Create an edge data frame
 edf <- 
   create_edge_df(
@@ -111,7 +104,7 @@ edf
 
 Create a graph object that contains nodes with `type` attrs and edges with `rel` attrs, and, view the graph in the Viewer.
 
-```{r}
+```{r create_graph_ndf_edf}
 # Create the graph using the
 # ndf and edf objects
 graph <-
@@ -128,13 +121,13 @@ As can be seen, all the edges have `rel` values displayed when using `output = "
 
 The edge analogue to `node_count()` is `edge_count()` and this function allows you to get counts of all edges or those edges by relationship. To get a count of all edges, simply pass the graph to `edge_count()`.
 
-```{r}
+```{r get_edge_count}
 edge_count(graph)
 ```
 
 By default, the `rel` argument is set to `FALSE` and that provides a total count of edges. Setting `rel` to `TRUE` yields a named vector of edge counts by relationship.
 
-```{r}
+```{r get_edge_count_rel_true}
 edge_count(graph, rel = TRUE)
 ```
 
@@ -153,27 +146,23 @@ edge_count(
 To identify which edges are of a particular rel, use the `get_edges()` function with the `rel` supplied. This function allows you have the edges returned in multiple ways by use of the `return_type` argument. Output can either be as a `vector` (the default), as a data frame (`df`), or as a `list`.
 
 ```{r}
-get_edges(
-  graph,
-  edge_attr = "rel",
-  match = "rel_a",
-  return_type = "vector")
+graph %>%
+  get_edges(
+    "rel == 'rel_a'")
 ```
 
 ```{r}
-get_edges(
-  graph,
-  edge_attr = "rel",
-  match = "rel_a",
-  return_type = "df")
+graph %>%
+  get_edges(
+    "rel == 'rel_a'",
+    return_type = "df")
 ```
 
 ```{r}
-get_edges(
-  graph,
-  edge_attr = "rel",
-  match = "rel_a",
-  return_type = "list")
+graph %>%
+  get_edges(
+    "rel == 'rel_a'",
+    return_type = "list")
 ```
 
 Either way, you can indeed isolate those edges that have certain `rel` values attached.
