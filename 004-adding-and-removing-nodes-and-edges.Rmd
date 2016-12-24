@@ -7,13 +7,12 @@ In a previous example notebook, it was demonstrated that creating node data fram
 
 ## Setup
 
-Ensure that the developement version of **DiagrammeR** is installed. Load in the package with `library()` and also ensure that the **magrittr** package is available.
+Ensure that the developement version of **DiagrammeR** is installed. Load in the package with `library()`.
 
 ```{r, results=FALSE}
 devtools::install_github("rich-iannone/DiagrammeR")
 
 library(DiagrammeR)
-library(magrittr)
 ```
 
 ## Part 1. Adding Nodes and Edges
