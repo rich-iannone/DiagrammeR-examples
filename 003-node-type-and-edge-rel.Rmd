@@ -9,7 +9,7 @@ Sometimes, you want some collection of nodes in your graph to be part of a group
 
 Ensure that the developement version of **DiagrammeR** is installed. Load in the package with `library()`.
 
-```{r, results=FALSE}
+```{r load_packages, results=FALSE}
 # devtools::install_github("rich-iannone/DiagrammeR")
 
 library(DiagrammeR)
@@ -19,7 +19,7 @@ library(DiagrammeR)
 
 When creating a node data frame, we easily apply groupings for nodes by supplying values for the `type` argument. 
 
-```{r}
+```{r create_ndf}
 # Create a node data frame with 8 nodes, and
 # assign several `type` values and unique
 # `label` values
@@ -133,7 +133,7 @@ edge_count(graph, rel = TRUE)
 
 Again, as with `node_count()`, one or more specified `rel` values can be used to determine the number of matching edges.
 
-```{r}
+```{r get_edge_count_with_rel}
 # Get a count of edges of with rel `rel_a`
 edge_count(graph, rel = c("rel_a"))
 
@@ -145,20 +145,20 @@ edge_count(
 
 To identify which edges are of a particular rel, use the `get_edges()` function with the `rel` supplied. This function allows you have the edges returned in multiple ways by use of the `return_type` argument. Output can either be as a `vector` (the default), as a data frame (`df`), or as a `list`.
 
-```{r}
+```{r get_edges_with_condition_vec}
 graph %>%
   get_edges(
     "rel == 'rel_a'")
 ```
 
-```{r}
+```{r get_edges_with_condition_df}
 graph %>%
   get_edges(
     "rel == 'rel_a'",
     return_type = "df")
 ```
 
-```{r}
+```{r get_edges_with_condition_list}
 graph %>%
   get_edges(
     "rel == 'rel_a'",
