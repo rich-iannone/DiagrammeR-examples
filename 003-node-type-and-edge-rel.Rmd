@@ -146,9 +146,7 @@ edge_count(
 To identify which edges are of a particular rel, use the `get_edges()` function with the `rel` supplied. This function allows you have the edges returned in multiple ways by use of the `return_type` argument. Output can either be as a `vector` (the default), as a data frame (`df`), or as a `list`.
 
 ```{r get_edges_with_condition_vec}
-graph %>%
-  get_edges(
-    "rel == 'rel_a'")
+graph %>% get_edges("rel == 'rel_a'")
 ```
 
 ```{r get_edges_with_condition_df}
