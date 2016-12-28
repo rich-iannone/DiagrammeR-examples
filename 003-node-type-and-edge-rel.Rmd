@@ -7,7 +7,7 @@ Sometimes, you want some collection of nodes in your graph to be part of a group
 
 ## Setup
 
-Ensure that the developement version of **DiagrammeR** is installed. Load in the package with `library()`.
+Ensure that the development version of **DiagrammeR** is installed. Load in the package with `library()`.
 
 ```{r load_packages, results=FALSE}
 # devtools::install_github("rich-iannone/DiagrammeR")

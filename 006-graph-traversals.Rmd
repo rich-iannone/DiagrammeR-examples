@@ -7,7 +7,7 @@ Graph traversal functions are available in several general-purpose graph librari
 
 ## Setup
 
-Ensure that the developement version of **DiagrammeR** is installed. Load in the package with `library()`.
+Ensure that the development version of **DiagrammeR** is installed. Load in the package with `library()`.
 
 ```{r load_packages, results=FALSE}
 #devtools::install_github("rich-iannone/DiagrammeR")

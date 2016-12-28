@@ -7,9 +7,9 @@ output: html_notebook
 
 ## Setup
 
-Ensure that the developement version of **DiagrammeR** is installed. Load in the package with `library()`.
+Ensure that the development version of **DiagrammeR** is installed. Load in the package with `library()`.
 
-```{r, results=FALSE}
+```{r load_packages, results=FALSE}
 #devtools::install_github("rich-iannone/DiagrammeR")
 
 library("DiagrammeR")

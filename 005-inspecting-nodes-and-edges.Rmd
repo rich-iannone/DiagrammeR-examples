@@ -5,13 +5,12 @@ output: html_notebook
 
 ## Setup
 
-Ensure that the developement version of **DiagrammeR** is installed. Load in the package with `library()` and also ensure that the **magrittr** package is available.
+Ensure that the development version of **DiagrammeR** is installed. Load in the package with `library()`.
 
-```{r, results=FALSE}
-devtools::install_github("rich-iannone/DiagrammeR")
+```{r load_packages, results=FALSE}
+#devtools::install_github("rich-iannone/DiagrammeR")
 
 library(DiagrammeR)
-library(magrittr)
 ```
 
 ## Part 1. Information on All Nodes and Edges
