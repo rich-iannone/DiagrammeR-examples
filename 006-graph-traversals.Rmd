@@ -7,13 +7,12 @@ Graph traversal functions are available in several general-purpose graph librari
 
 ## Setup
 
-Ensure that the developement version of **DiagrammeR** is installed. Load in the package with `library()` and also ensure that the **magrittr** package is available.
+Ensure that the developement version of **DiagrammeR** is installed. Load in the package with `library()`.
 
-```{r, results=FALSE}
-devtools::install_github("rich-iannone/DiagrammeR")
+```{r load_packages, results=FALSE}
+#devtools::install_github("rich-iannone/DiagrammeR")
 
 library(DiagrammeR)
-library(magrittr)
 ```
 
 ## Part 1. Preparing the Graph
@@ -24,7 +23,7 @@ The example graph to be used is a fake dataset with contributors to software pro
 # This is a CSV file containing contributors to
 # software projects:
 contributors_csv <-
-  system.file("examples/contributors.csv",
+  system.file("extdata/contributors.csv",
               package = "DiagrammeR")
 
 # Display the column names in this CSV
@@ -37,7 +36,7 @@ colnames(read.csv(contributors_csv,
 # the software projects:
 
 projects_csv <-
-  system.file("examples/projects.csv",
+  system.file("extdata/projects.csv",
               package = "DiagrammeR")
 
 colnames(read.csv(projects_csv,
@@ -50,7 +49,7 @@ colnames(read.csv(projects_csv,
 # contributors:
 
 projects_and_contributors_csv <-
-  system.file("examples/projects_and_contributors.csv",
+  system.file("extdata/projects_and_contributors.csv",
               package = "DiagrammeR")
 
 colnames(read.csv(projects_and_contributors_csv,
@@ -59,33 +58,35 @@ colnames(read.csv(projects_and_contributors_csv,
 Create the property graph by adding the CSV data to a new graph; the `add_nodes_from_csv()` and `add_edges_from_csv()` functions are used to create nodes and edges in the graph.
 
 ```{r}
-
 # Create the main graph
 graph <-
   create_graph() %>%
   set_graph_name("software_projects") %>%
-  set_global_graph_attrs(
-    "graph", "output", "visNetwork") %>%
   add_nodes_from_table(
-    contributors_csv,
+    system.file(
+      "extdata", "contributors.csv",
+      package = "DiagrammeR"),
     set_type = "person",
     label_col = "name") %>%
   add_nodes_from_table(
-    projects_csv,
+    system.file(
+      "extdata", "projects.csv",
+      package = "DiagrammeR"),
     set_type = "project",
     label_col = "project") %>%
   add_edges_from_table(
-    projects_and_contributors_csv,
+    system.file(
+      "extdata", "projects_and_contributors.csv",
+      package = "DiagrammeR"),
     from_col = "contributor_name",
-    from_mapping = "name",
     to_col = "project_name",
-    to_mapping = "project",
+    ndf_mapping = "label",
     rel_col = "contributor_role")
 ```
 
 Now that the graph object has been generated, render the graph in the **RStudio** Viewer:
 ```{r}
-render_graph(graph)
+render_graph(graph, output = "visNetwork")
 ```
 ## Part 2. Querying the Graph to Get Answers
 
@@ -95,9 +96,10 @@ We can get the average age of all the contributors. We do this by first selectin
 
 ```{r}
 graph %>% 
-  select_nodes("type", "person") %>%
+  select_nodes("type == 'person'") %>%
   cache_node_attrs_ws("age", "numeric") %>%
-  get_cache %>% mean
+  get_cache() %>%
+  mean()
 ```
 The average age is `33.6` years.
 
@@ -105,10 +107,10 @@ To get the total number of commits to all software projects, follow a similar st
 
 ```{r}
 graph %>% 
-  select_edges %>%
+  select_edges() %>%
   cache_edge_attrs_ws("commits", "numeric") %>%
-  get_cache %>% 
-  sum
+  get_cache() %>% 
+  sum()
 ```
 
 ## Part 3. Using Traversals to Get Answers
@@ -129,21 +131,21 @@ Now it is time to use traversals to get more specific information from the graph
 
 ```{r}
 graph %>% 
-  select_nodes("name", "Josh") %>%
-  trav_out_edge %>%
+  select_nodes("name == 'Josh'") %>%
+  trav_out_edge() %>%
   cache_edge_attrs_ws("commits", "numeric") %>%
-  get_cache %>% 
-  sum
+  get_cache() %>% 
+  sum()
 ```
 
 Switching to another user in the graph, get the total number of commits from Louisa:
 
 ```{r}
 graph %>% 
-  select_nodes("name", "Louisa") %>%
-  trav_out_edge %>%
+  select_nodes("name == 'Louisa'") %>%
+  trav_out_edge() %>%
   cache_edge_attrs_ws("commits", "numeric") %>%
-  get_cache %>% 
+  get_cache() %>% 
   sum
 ```
 
@@ -171,7 +173,7 @@ get_edge_df(graph_scale_width_edges)
 Upon rendering the graph, the larger edges (and arrows) will indicate larger numbers of `commits`.
 
 ```{r}
-render_graph(graph_scale_width_edges)
+render_graph(graph_scale_width_edges, output = "visNetwork")
 ```
 
 The `rescale_edge_attrs()` function also works to scale across two colors. Here we take the `commits` edge attribute as before but scale from the color `gray95` (light gray) to the color `gray5` (dark gray). The color values (represented as hexadecimal color codes) are placed in the `color` edge attribute column. Here, we'll transform the graph and also display the edf to show the values in the new `color` column. 
@@ -188,17 +190,17 @@ get_edge_df(graph_scale_color_edges)
 Upon rendering this graph, we can see very clearly that the darker edges represent higher numbers of commits.
 
 ```{r}
-render_graph(graph_scale_color_edges)
+render_graph(graph_scale_color_edges, output = "visNetwork")
 ```
 
 Getting back to traversals, we can perform interesting combinations of `select_`s so that specific information can be retrieved. Consider the case of getting the names of people that are above age `32`. Start by selecting all nodes that represent people and not repositories (so, `type == person`), and then make another selection where the `age` attribute has a value greater than `32`. On the second `select_nodes()` call, use `intersect` for the `set_op` argument. This indicates that any set of nodes found must intersect with the first previous set (this essentially applies the base **R** function `intersect()`). This guarantees that for any nodes where age is greater than `32`, such nodes are of `type == person`. Following that, cache the values for the `name` node attribute, then immediately collect those values in a vector with `get_cache()`.
 
 ```{r}
 graph %>% 
-  select_nodes("type", "person") %>%
-  select_nodes("age", ">32", "intersect") %>%
+  select_nodes("type == 'person'") %>%
+  select_nodes("age > 32", "intersect") %>%
   cache_node_attrs_ws("name") %>%
-  get_cache
+  get_cache()
 ```
 
 Here's another problem: getting the total number of commits from all people involved with the `supercalc` repository. We know that people contributing to projects have edges from people to projects (and not the other way around). Start with the project itself by selecting it with `select_nodes` and using a node attribute and value pair (we know that all project names are unique, so only one project will be selected). Then, use the `trav_in_edge()` function. This will move the selection from the node to all the edges that are pointing *in*. The last three steps are:
@@ -209,25 +211,25 @@ Here's another problem: getting the total number of commits from all people invo
 
 ```{r}
 graph %>% 
-  select_nodes("project", "supercalc") %>%
-  trav_in_edge %>%
+  select_nodes("project == 'supercalc'") %>%
+  trav_in_edge() %>%
   cache_edge_attrs_ws("commits", "numeric") %>%
-  get_cache %>% 
-  sum
+  get_cache() %>% 
+  sum()
 ```
 
 Say you wanted to get the name of the person that committed the most to the `supercalc` project. There are a few ways to do this. Below is a traversal-heavy solution:
 
 ```{r}
 graph %>% 
-  select_nodes("project", "supercalc") %>%
-  trav_in_edge %>%
+  select_nodes("project == 'supercalc'") %>%
+  trav_in_edge() %>%
   cache_edge_attrs_ws("commits", "numeric") %>%
-  trav_in_node %>%
-  trav_in_edge("commits", max(get_cache(.))) %>%
-  trav_out_node %>%
+  trav_in_node() %>%
+  trav_in_edge(paste("commits ==", max(get_cache(.)))) %>%
+  trav_out_node() %>%
   cache_node_attrs_ws("name") %>%
-  get_cache
+  get_cache()
 ```
 
 Some explanation is required here. Since we always start with a selection, such selection began with the entity that known: the node with the value `supercalc` as a `project` node attribute (could have also used `label == supercalc` to make this selection). Then, a traversal was made to all the inbound edges. All of the edges' values for `commits` was then cached for later use. The `trav_in_node()` function was used to traverse back to the `supercalc` node (think: traversing into the node from adjacent edges). Again, we'll traverse back to the same edges, except, this time we'll set a condition that the selection can only occur for edges where `commits == max([commits_from_those_edges])`. In this case, that's a single edge that's selected. Since that edge is joined to the person that committed most to the `supercalc` project, we will traverse to that node using `trav_out_node()`. Since that node is now selected, we can use `cache_node_attrs_ws()` (cache node attributes with selection) and specify that the value for the `name` attribute should be cached. Right away, we `get_cache()` and the answer is revealed.
@@ -241,21 +243,21 @@ Because the graph has a specified structure, this pipeline of graph operations c
 get_highest_committer <- function(graph, project_name) {
   
   graph %>% 
-    select_nodes("project", project_name) %>%
-    trav_in_edge %>%
+    select_nodes(paste0("project == '", project_name, "'")) %>%
+    trav_in_edge() %>%
     cache_edge_attrs_ws("commits", "numeric") %>%
-    trav_in_node %>%
-    trav_in_edge("commits", max(get_cache(.))) %>%
-    trav_out_node %>%
+    trav_in_node() %>%
+    trav_in_edge(paste("commits ==", max(get_cache(.)))) %>%
+    trav_out_node() %>%
     cache_node_attrs_ws("name") %>%
-    get_cache
+    get_cache()
 }
 
-# Call the function for each of the repositories
+# Call the function for each of the repositories to get
+# the name of the person that committed most to each project
 get_highest_committer(graph, "supercalc")
 get_highest_committer(graph, "randomizer")
 get_highest_committer(graph, "stringbuildeR")
-
 ```
 
 ## Part 3. Additional Graph Data Questions and Possible Solutions
@@ -266,51 +268,51 @@ What is the email address of the individual that contributed the least to the `r
 
 ```{r}
 graph %>% 
-  select_nodes("project", "randomizer") %>%
-  trav_in_edge %>%
+  select_nodes("project == 'randomizer'") %>%
+  trav_in_edge() %>%
   cache_edge_attrs_ws("commits", "numeric") %>%
-  trav_in_node %>%
-  trav_in_edge("commits", min(get_cache(.))) %>%
-  trav_out_node %>%
+  trav_in_node() %>%
+  trav_in_edge(paste("commits ==", min(get_cache(.)))) %>%
+  trav_out_node() %>%
   cache_node_attrs_ws("email") %>%
-  get_cache
+  get_cache()
 ```
 
 Get a list of all email addresses for the contributors (but not the maintainers) of the `randomizer` and `supercalc` projects. Consecutive `select_nodes()` calls can be thought of as 'and'-type selections (since `set_op == "union"` in the default case for all `select_...()` functions).
 
 ```{r}
 graph %>% 
-  select_nodes("project", "randomizer") %>%
-  select_nodes("project", "supercalc") %>%
-  trav_in_edge("rel", "contributor") %>%
-  trav_out_node %>%
+  select_nodes("project == 'randomizer'") %>%
+  select_nodes("project == 'supercalc'") %>%
+  trav_in_edge("rel == 'contributor'") %>%
+  trav_out_node() %>%
   cache_node_attrs_ws("email", "character") %>%
-  get_cache
+  get_cache()
 ```
 
 Which committer to the `randomizer` project has the highest number of followers? Recall that `follower_count` is a node attribute.
 
 ```{r}
 graph %>% 
-  select_nodes("project", "randomizer") %>%
-  trav_in %>%
+  select_nodes("project == 'randomizer'") %>%
+  trav_in() %>%
   cache_node_attrs_ws(
     "follower_count", "numeric") %>%
-  select_nodes("project", "randomizer") %>%
-  trav_in("follower_count", max(get_cache(.))) %>%
+  select_nodes("project == 'randomizer'") %>%
+  trav_in(paste("follower_count ==", max(get_cache(.)))) %>%
   cache_node_attrs_ws("name") %>%
-  get_cache
+  get_cache()
 ```
 
 Which people have committed to more than one project? (The solution contains no traversals but it's still interesting because it's predicated on one knowing the graph model.)
 
 ```{r}
 graph %>%
-  select_nodes_by_degree("out", ">1") %>%
+  select_nodes_by_degree("outdeg > 1") %>%
   cache_node_attrs_ws("name") %>%
-  get_cache
+  get_cache()
 ```
 
 ## Conclusion
 
-Graph traversals are undoubtedly useful operations. The nomenclature can be a point of confusion at first (I admit that their function names require some thought as to what traversal will result). However, given time and some practice, traversals will enable you to gleaning the appropriate information from a graph with the greatest of ease. As a graph becomes ever more complicated with the additions of nodes and edges, traversal functions (coupled with knowledge of a graph's underlying data model) show their utility and worth.
+Graph traversals are undoubtedly useful operations. The nomenclature can be a point of confusion at first (I admit that their function names require some thought as to what kind of traversal will occur). However, given time and some practice, traversals will enable you to glean the appropriate information from a graph with the greatest of ease. As a graph becomes ever more complicated with the additions of nodes and edges, traversal functions (coupled with knowledge of a graph's underlying data model) will show their utility and worth.
