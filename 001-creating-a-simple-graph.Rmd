@@ -19,7 +19,7 @@ library("DiagrammeR")
 
 For graph diagrams you need nodes and edges. Let's use the `create_node_df()` function specify a collection of nodes and contain them in a data frame (a node data frame, or ndf). Immediately after that, inspect the node data frame.
 
-```{r}
+```{r create_node_df}
 ndf <- 
   create_node_df(
     n = 3,
@@ -32,7 +32,7 @@ The `n` argument is required here and it must the number of nodes you intend thi
 
 You may have noticed the node attribute `type` in the output. Values may optionally be provided for this and they values are useful for categorizing collections of nodes. Let's refine the `ndf` object and include two different `type` values.
 
-```{r}
+```{r create_ndf_type}
 ndf <- 
   create_node_df(
     n = 3,
@@ -44,7 +44,7 @@ ndf
 
 Now onto the edges, those connections between the nodes. The edge connections are also collected in a data frame (this time, an edge data frame or edf). The `create_edge_df()` function is used to generate this object.
 
-```{r}
+```{r create_edge_df}
 edf <- 
   create_edge_df(
     from = c(1, 1),
@@ -55,7 +55,7 @@ edf
 
 The `from` and `to` arguments specify which nodes the the edge is outgoing and incoming, respectively. Here, the edges are: `1->2` and `1->3`. For directed graphs, the order is essential. The `rel` argument allows for inclusion of text labels in the same manner as the node `type`. This is useful for targeting specific groups of edges during a selection or traversal. Let's refine the `edf` object and include two different `rel` values.
 
-```{r}
+```{r create_edf_rel}
 edf <- 
   create_edge_df(
     from = c(1, 1),
@@ -67,7 +67,7 @@ edf
 
 Now that we have an ndf and an edf, we can now combine those into a graph object.
 
-```{r}
+```{r create_graph}
 the_graph <- 
   create_graph(
     nodes_df = ndf,
@@ -78,17 +78,17 @@ Having a graph object is a great first step and you can do a lot with them (insp
 
 ### Graphviz
 
-```{r}
+```{r render_graph_graphviz}
 render_graph(graph = the_graph, output = "graph")
 ```
 
 ### Vivagraph
-```{r}
+```{r render_graph_vivagraph}
 render_graph(graph = the_graph, output = "vivagraph")
 ```
 
 ### visNetwork
-```{r}
+```{r render_graph_visnetwork}
 render_graph(graph = the_graph, output = "visNetwork")
 ```
 
@@ -96,7 +96,7 @@ render_graph(graph = the_graph, output = "visNetwork")
 
 You don't really need to have a node data frame in conjunction with the edge data frame to make a graph object. You can have both, either of them, or neither of them (creating an empty graph). Here is the empty graph case:
 
-```{r}
+```{r create_graph_render}
 render_graph(create_graph())
 ```
 
@@ -104,7 +104,7 @@ render_graph(create_graph())
 
 We can just display nodes without edges by passing in just a node data frame to the `create_graph()` function.
 
-```{r}
+```{r create_graph_just_nodes}
 # Create the node data frame
 ndf <- 
   create_node_df(
@@ -120,7 +120,7 @@ render_graph(graph = the_graph)
 
 Here is an example with 26 nodes, this time wrapping the `create_nodes()`, `create_graph()`, and `render_graph()` function calls into one big statement.
 
-```{r}
+```{r create_graph_nested_render}
 render_graph(
   create_graph(
     nodes_df =
@@ -131,7 +131,7 @@ render_graph(
 
 Unicode characters can also be used as `label` attribute values:
 
-```{r}
+```{r create_graph_nested_render_unicode}
 render_graph(
   create_graph(
     nodes_df =
@@ -142,7 +142,7 @@ render_graph(
 
 Nesting calls like becomes less readable with increasing numbers of operations. **DiagrammeR** works very well with the **magrittr** package to allow forward-piping of graph operations with the `%>%` operator. Here is the same set of functions as above, except using `%>%` to chain the operations left to right:
 
-```{r}
+```{r create_graph_render_unicode_magrittr}
 create_node_df(
   n = 3, label = c("α", "β", "γ")) %>%
   create_graph(nodes_df = .) %>%
