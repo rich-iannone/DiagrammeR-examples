@@ -19,7 +19,7 @@ library(DiagrammeR)
 
 The example graph to be used is a fake dataset with contributors to software projects on a platform not unlike **GitHub**. First, get paths to the CSV files available in the package.
 
-```{r}
+```{r csv_contributors}
 # This is a CSV file containing contributors to
 # software projects:
 contributors_csv <-
@@ -31,7 +31,7 @@ colnames(read.csv(contributors_csv,
                   stringsAsFactors = FALSE))
 ```
 
-```{r}
+```{r csv_projects}
 # This is a CSV file containing information about
 # the software projects:
 
@@ -43,7 +43,7 @@ colnames(read.csv(projects_csv,
                   stringsAsFactors = FALSE))
 ```
 
-```{r}
+```{r csv_projects_and_contributors}
 # This is a CSV file with information about the
 # relationships between the projects and their
 # contributors:
@@ -55,9 +55,10 @@ projects_and_contributors_csv <-
 colnames(read.csv(projects_and_contributors_csv,
                   stringsAsFactors = FALSE))
 ```
+
 Create the property graph by adding the CSV data to a new graph; the `add_nodes_from_csv()` and `add_edges_from_csv()` functions are used to create nodes and edges in the graph.
 
-```{r}
+```{r create_property_graph}
 # Create the main graph
 graph <-
   create_graph() %>%
@@ -84,28 +85,39 @@ graph <-
     rel_col = "contributor_role")
 ```
 
-Now that the graph object has been generated, render the graph in the **RStudio** Viewer:
-```{r}
+We can verify that this is indeed a property graph by using the `is_property_graph()` function. It will return `TRUE` if all nodes have an assigned `type` value and all edges have an assigned `rel` value; otherwise, you'll get `FALSE`.
+
+```{r verify_if_property_graph}
+# Is the graph object a property graph? (It is.)
+is_property_graph(graph)
+```
+
+Now that the graph object has been generated, and we know that it's a property graph, render the graph to have a look at it.
+
+```{r use_render_graph}
+# Render the graph using the `visNetwork` output system
 render_graph(graph, output = "visNetwork")
 ```
+
 ## Part 2. Querying the Graph to Get Answers
 
 Now that we have a property graph, we can find out bits of information without directly inspecting such information (i.e., not working with the graph's internal node or edge data frames). This will be important when a property graph becomes larger or more complex since manual work these data frames gets difficult and impractical.
 
 We can get the average age of all the contributors. We do this by first selecting all nodes of the `type` that is `person`. Then, for these selected nodes, we cache the node attribute corresponding to `age`. The cache is retained in the graph object. The next steps are to retrieve the cache with `get_cache()` and pass that numeric vector to the `mean()` function.
 
-```{r}
+```{r get_mean_age}
 graph %>% 
   select_nodes("type == 'person'") %>%
   cache_node_attrs_ws("age", "numeric") %>%
   get_cache() %>%
   mean()
 ```
+
 The average age is `33.6` years.
 
 To get the total number of commits to all software projects, follow a similar strategy of selecting all edges with `select_edges()`. Cache all of the values for the edge attribute `commits`. Get the cache as a vector with `get_cache()` and compute the sum of those values.
 
-```{r}
+```{r get_sum_of_all_commits}
 graph %>% 
   select_edges() %>%
   cache_edge_attrs_ws("commits", "numeric") %>%
@@ -129,7 +141,7 @@ The traversal functions in **DiagrammeR** are all named as `trav_...()` and thei
 
 Now it is time to use traversals to get more specific information from the graph. If we were to get the total number of commits from Josh, we can first select the node for Josh using `select_nodes()` and specifying that the `name` attribute should have the value `Josh`. Commits are values that exist on the graph's edges, so, we must traverse from the single node (that is, the current node selection) onto any outbound edges. This is done with the `trav_out_edge()` function, and using it will modify the selection to now contain any of those edges directed out of the node.
 
-```{r}
+```{r get_commits_for_specific_user}
 graph %>% 
   select_nodes("name == 'Josh'") %>%
   trav_out_edge() %>%
@@ -140,7 +152,7 @@ graph %>%
 
 Switching to another user in the graph, get the total number of commits from Louisa:
 
-```{r}
+```{r get_commits_for_another_user}
 graph %>% 
   select_nodes("name == 'Louisa'") %>%
   trav_out_edge() %>%
@@ -157,7 +169,9 @@ As a bit of an aside, we can use selections and rescale values to a styling attr
 
 Here, we will take the `commits` edge attribute and scale all values to the range `0.5` and `3.0` and use those values as the new `width` attribute (an aesthetic edge attribute that sets the width of each edge line).
 
-```{r}
+```{r rescale_commits_to_get_width_attr}
+# Create a new edge attribute (`width`) that
+# derives from scaled values of `commits`
 graph_scale_width_edges <-
   graph %>% 
   rescale_edge_attrs(
@@ -166,19 +180,19 @@ graph_scale_width_edges <-
 
 It's almost always a good idea to check the node data frame or edge data frame after a transformation (as a sort of sanity check). Inspect the graph's edf using the `get_edge_df()` function.
 
-```{r}
+```{r use_get_edge_df}
 get_edge_df(graph_scale_width_edges)
 ```
 
 Upon rendering the graph, the larger edges (and arrows) will indicate larger numbers of `commits`.
 
-```{r}
+```{r view_graph_after_modification}
 render_graph(graph_scale_width_edges, output = "visNetwork")
 ```
 
 The `rescale_edge_attrs()` function also works to scale across two colors. Here we take the `commits` edge attribute as before but scale from the color `gray95` (light gray) to the color `gray5` (dark gray). The color values (represented as hexadecimal color codes) are placed in the `color` edge attribute column. Here, we'll transform the graph and also display the edf to show the values in the new `color` column. 
 
-```{r}
+```{r rescale_across_colors_using_commits}
 graph_scale_color_edges <-
   graph %>% 
   rescale_edge_attrs(
@@ -189,13 +203,13 @@ get_edge_df(graph_scale_color_edges)
 
 Upon rendering this graph, we can see very clearly that the darker edges represent higher numbers of commits.
 
-```{r}
+```{r view_graph_after_edge_changes}
 render_graph(graph_scale_color_edges, output = "visNetwork")
 ```
 
 Getting back to traversals, we can perform interesting combinations of `select_`s so that specific information can be retrieved. Consider the case of getting the names of people that are above age `32`. Start by selecting all nodes that represent people and not repositories (so, `type == person`), and then make another selection where the `age` attribute has a value greater than `32`. On the second `select_nodes()` call, use `intersect` for the `set_op` argument. This indicates that any set of nodes found must intersect with the first previous set (this essentially applies the base **R** function `intersect()`). This guarantees that for any nodes where age is greater than `32`, such nodes are of `type == person`. Following that, cache the values for the `name` node attribute, then immediately collect those values in a vector with `get_cache()`.
 
-```{r}
+```{r get_names_of_people}
 graph %>% 
   select_nodes("type == 'person'") %>%
   select_nodes("age > 32", "intersect") %>%
@@ -209,7 +223,7 @@ Here's another problem: getting the total number of commits from all people invo
 1. Getting those cached values (the output object is now a numeric vector)
 1. Passing the vector to the `sum()` function to get the sum of commits
 
-```{r}
+```{r get_total_commits_to_supercalc}
 graph %>% 
   select_nodes("project == 'supercalc'") %>%
   trav_in_edge() %>%
@@ -220,7 +234,7 @@ graph %>%
 
 Say you wanted to get the name of the person that committed the most to the `supercalc` project. There are a few ways to do this. Below is a traversal-heavy solution:
 
-```{r}
+```{r get_supercalc_highest_committer}
 graph %>% 
   select_nodes("project == 'supercalc'") %>%
   trav_in_edge() %>%
@@ -236,8 +250,7 @@ Some explanation is required here. Since we always start with a selection, such 
 
 Because the graph has a specified structure, this pipeline of graph operations can be used to answer the same question about any repository. Simply create a function and provide the input graph and the project name to query.
 
-```{r}
-
+```{r function_highest_committer_to_project}
 # Create a function that gets the person that committed
 # the most to a project
 get_highest_committer <- function(graph, project_name) {
@@ -266,7 +279,7 @@ There are so many questions one can ask of their dataset and the graph model pro
 
 What is the email address of the individual that contributed the least to the `randomizer` project?
 
-```{r}
+```{r email_address_lowest_committer}
 graph %>% 
   select_nodes("project == 'randomizer'") %>%
   trav_in_edge() %>%
@@ -280,7 +293,7 @@ graph %>%
 
 Get a list of all email addresses for the contributors (but not the maintainers) of the `randomizer` and `supercalc` projects. Consecutive `select_nodes()` calls can be thought of as 'and'-type selections (since `set_op == "union"` in the default case for all `select_...()` functions).
 
-```{r}
+```{r get_emails_for_contributors_to_randomizer}
 graph %>% 
   select_nodes("project == 'randomizer'") %>%
   select_nodes("project == 'supercalc'") %>%
@@ -292,7 +305,7 @@ graph %>%
 
 Which committer to the `randomizer` project has the highest number of followers? Recall that `follower_count` is a node attribute.
 
-```{r}
+```{r highest_follower_count_for_randomizer_committer}
 graph %>% 
   select_nodes("project == 'randomizer'") %>%
   trav_in() %>%
@@ -306,7 +319,7 @@ graph %>%
 
 Which people have committed to more than one project? (The solution contains no traversals but it's still interesting because it's predicated on one knowing the graph model.)
 
-```{r}
+```{r names_committers_to_multiple_projects}
 graph %>%
   select_nodes_by_degree("outdeg > 1") %>%
   cache_node_attrs_ws("name") %>%
