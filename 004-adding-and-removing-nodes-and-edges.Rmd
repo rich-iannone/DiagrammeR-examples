@@ -3,7 +3,7 @@ title: "004 - Adding and Removing Nodes and Edges"
 output: html_notebook
 ---
 
-In a previous example notebook, it was demonstrated that creating node data frames and edge data frames was a viable strategy for building a graph. That pattern is useful for bulk additions of connected nodes as first step. Another means to compose a graph is to initialize an empty or partially-populated graph and add nodes individually, incorporating edges either during node addition or as separate operations. This is useful when data is collected slowly over time (e.g., through periodic data collections) and you'd like to update the graph with recent data. The notebook will demonstrate primarily how to add nodes and edges to a graph, and, how to remove them.
+In a previous example notebook, it was demonstrated that creating node data frames and edge data frames could be a viable strategy for building a graph. That pattern is useful for bulk additions of connected nodes as first step. Another means to compose a graph is to initialize an empty or partially-populated graph and add nodes individually, incorporating edges either during node addition or as separate operations. This is useful when data is collected slowly over time (e.g., through periodic data collections) and you'd like to update the graph with recent data. The notebook will demonstrate primarily how to add nodes and edges to a graph, and, how to remove them.
 
 ## Setup
 
@@ -216,7 +216,7 @@ To verify that the change was applied, use the `get_edge_df()` function to outpu
 get_edge_df(graph_f)
 ```
 
-Alternatively, use the `get_edge_attrs()` to verify. By supplying the graph object and the name of the edge attribute (`rel`), we get a named vector of edge attribute values (where the names are the edges in the format [id] -> [id]).
+Alternatively, use the `get_edge_attrs()` to verify. By supplying the graph object and the name of the edge attribute (`rel`), we get a named vector of edge attribute values (where the names are the edges in the format `[id] -> [id]`).
 
 ```{r get_edge_attrs_edge_attr_rel}
 get_edge_attrs(graph_f, edge_attr = "rel")
@@ -237,13 +237,13 @@ Nodes and edges can just as easily be taken away. The key functions here are `de
 
 ```{r remove_node_and_also_edges}
 # Get the number of edges before node removal
-edges_before_change <- edge_count(graph)
+edges_before_change <- edge_count(graph_f)
 
 # Remove node `6` from the graph
 graph_g <- delete_node(graph_f, node = 6)
 
-# Get the number of edges before after removal
-edges_after_change <- edge_count(graph)
+# Get the number of edges after the removal
+edges_after_change <- edge_count(graph_g)
 
 # Show, as a vector, the number of edges
 # before and after the removal of a node
@@ -252,25 +252,25 @@ c(edges_before_change, edges_after_change)
 
 View the revised graph to see the change.
 
-```{r}
+```{r view_revised_graph}
 render_graph(graph_g, output = "visNetwork")
 ```
 
 To remove a single edge we use `delete_edge()` By removing the edge `5->2` we are left with a circular graph. Here we will get an edge count before the edge removal, remove the edge, then get another count of edges.
 
-```{r}
+```{r delete_edge_5_2}
 # Get the number of edges before edge removal
-edge_count(graph)
+edge_count(graph_g)
 
 # Remove edge `5->2` from the graph
-graph <- delete_edge(graph, from = 5, to = 2)
+graph_h <- delete_edge(graph_g, from = 5, to = 2)
 
 # Get the number of edges after edge removal
-edge_count(graph)
+edge_count(graph_h)
 ```
 
 View the graph again and note that no nodes were removed. The `delete_edge()` function never removes nodes. We do get that cycle graph, as promised. 
 
-```{r}
-render_graph(graph, output = "visNetwork")
+```{r view_revised_graph_2}
+render_graph(graph_h, output = "visNetwork")
 ```
