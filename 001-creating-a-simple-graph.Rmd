@@ -79,16 +79,20 @@ Having a graph object is a great first step and you can do a lot with them (insp
 ### Graphviz
 
 ```{r render_graph_graphviz}
+# Show the graph using the Graphviz engine
 render_graph(graph = the_graph, output = "graph")
 ```
 
 ### Vivagraph
+
 ```{r render_graph_vivagraph}
+# Show the graph using the Vivagraph engine
 render_graph(graph = the_graph, output = "vivagraph")
 ```
 
 ### visNetwork
 ```{r render_graph_visnetwork}
+# Show the graph using the visNetwork engine
 render_graph(graph = the_graph, output = "visNetwork")
 ```
 
@@ -97,12 +101,14 @@ render_graph(graph = the_graph, output = "visNetwork")
 You don't really need to have a node data frame in conjunction with the edge data frame to make a graph object. You can have both, either of them, or neither of them (creating an empty graph). Here is the empty graph case:
 
 ```{r create_graph_render}
+# Render a just created graph; there aren't
+# any nodes for the view should be empty
 render_graph(create_graph())
 ```
 
 ## Part 3. Graph with Nodes but No Edges
 
-We can just display nodes without edges by passing in just a node data frame to the `create_graph()` function.
+We can just display nodes without edges by passing in just a node data frame to the `create_graph()` function. This a reasonable way to initialize a graph and edges between these initial nodes can always be added in later with functions like `add_edges()`, `add_edges_w_string()`, `add_edge_df()`, and `add_edges_from_table()`.
 
 ```{r create_graph_just_nodes}
 # Create the node data frame
