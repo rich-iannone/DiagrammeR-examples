@@ -3,7 +3,7 @@ title: "004 - Adding and Removing Nodes and Edges"
 output: html_notebook
 ---
 
-In a previous example notebook, it was demonstrated that creating node data frames and edge data frames could be a viable strategy for building a graph. That pattern is useful for bulk additions of connected nodes as first step. Another means to compose a graph is to initialize an empty or partially-populated graph and add nodes individually, incorporating edges either during node addition or as separate operations. This is useful when data is collected slowly over time (e.g., through periodic data collections) and you'd like to update the graph with recent data. The notebook will demonstrate primarily how to add nodes and edges to a graph, and, how to remove them.
+In a previous example notebook, it was demonstrated that creating node data frames and edge data frames could be a viable strategy for building a graph. That pattern is useful for bulk additions of connected nodes as a first step. Another means to compose a graph is to initialize an empty or partially-populated graph and add nodes individually, incorporating edges either during node addition or as separate operations. This is useful when data is collected slowly over time (e.g. through periodic data collections) and you'd like to update the graph with recent data. This notebook will demonstrate primarily how to add nodes and edges to a graph, and how to remove them.
 
 ## Setup
 
@@ -111,7 +111,7 @@ graph_edge_w_labels <-
 graph_edge_w_labels %>% get_edges(return_values = "label")
 ```
 
-The `get_edges()` function can output the pairs of nodes in edges either as a character vector (as above, it's the default), as a data frame (with 2 columns: `from` and `to`), or as a list (first component is the `from` vector and the second represents the `to` nodes). Here are examples of the latter two output types:
+The `get_edges()` function can output the pairs of nodes in edges either as a character vector (as above, which is the default), as a data frame (with 2 columns: `from` and `to`), or as a list (first component is the `from` vector and the second represents the `to` nodes). Here are examples of the latter two output types:
 
 ```{r get_edges_return_type_df}
 # Get the graph's edges as a data frame
@@ -123,7 +123,7 @@ get_edges(graph_edge_w_labels, return_type = "df")
 get_edges(graph_edge_w_labels, return_type = "list")
 ```
 
-The addition of a node and the creation of edgeas can also be performed in a single `add_node()` step. You can use either (or both) of the optional `from` and `to` arguments in the `add_node()` function. This is best demonstrated through several examples.
+The addition of a node and the creation of edges can also be performed in a single `add_node()` step. You can use either (or both) of the optional `from` and `to` arguments in the `add_node()` function. This is best demonstrated by means of a few examples.
 
 ```{r add_node_edge_a}
 # Add node with ID `3` and the
@@ -228,11 +228,11 @@ View the graph again to see that all edges are labeled with the `to_number` `rel
 render_graph(graph_f, output = "visNetwork")
 ```
 
-It should be noted that there are also analogous `set_node_attrs()` and `get_node_attrs()` functions that allow for setting and getting attributes for nodes in a graph (or, in a node data frame).
+It should be noted that there are also analogous `set_node_attrs()` and `get_node_attrs()` functions that allow for setting and getting attributes for nodes in a graph (or in a node data frame).
 
 ## Part 2. Removing Nodes and Edges
 
-Nodes and edges can just as easily be taken away. The key functions here are `delete_node()` and `delete_edge()`. Removing a node also removes all edges to and from that node. For sake of example, let's remove the node with the ID `6` which is one of the more highly connected nodes in the graph.
+Nodes and edges can just as easily be removed. The key functions here are `delete_node()` and `delete_edge()`. Removing a node also removes all edges to and from that node. For the sake of example, let's remove the node with the ID `6` which is one of the more highly connected nodes in the graph.
 
 
 ```{r remove_node_and_also_edges}

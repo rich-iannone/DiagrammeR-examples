@@ -85,10 +85,10 @@ graph <-
     rel_col = "contributor_role")
 ```
 
-We can verify that this is indeed a property graph by using the `is_property_graph()` function. It will return `TRUE` if all nodes have an assigned `type` value and all edges have an assigned `rel` value; otherwise, you'll get `FALSE`.
+We can verify that this is indeed a property graph by using the `is_property_graph()` function. It will return `TRUE` if all nodes have an assigned `type` value and all edges have an assigned `rel` value; otherwise you'll get `FALSE`.
 
 ```{r verify_if_property_graph}
-# Is the graph object a property graph? (It is.)
+# Is the graph object a property graph?
 is_property_graph(graph)
 ```
 
@@ -101,7 +101,7 @@ render_graph(graph, output = "visNetwork")
 
 ## Part 2. Querying the Graph to Get Answers
 
-Now that we have a property graph, we can find out bits of information without directly inspecting such information (i.e., not working with the graph's internal node or edge data frames). This will be important when a property graph becomes larger or more complex since manual work these data frames gets difficult and impractical.
+Now that we have a property graph, we can find out bits of information without directly inspecting such information (i.e. not working with the graph's internal node or edge data frames). This will be important when a property graph becomes larger or more complex since manual work on these data frames gets difficult and impractical.
 
 We can get the average age of all the contributors. We do this by first selecting all nodes of the `type` that is `person`. Then, for these selected nodes, we cache the node attribute corresponding to `age`. The cache is retained in the graph object. The next steps are to retrieve the cache with `get_cache()` and pass that numeric vector to the `mean()` function.
 
@@ -139,7 +139,7 @@ The traversal functions in **DiagrammeR** are all named as `trav_...()` and thei
 | `trav_out_node()`  | edge to node      | move from an edge to the node where the edge is outbound
 | `trav_in_node()`   | edge to node      | move from an edge to the node where the edge is inbound
 
-Now it is time to use traversals to get more specific information from the graph. If we were to get the total number of commits from Josh, we can first select the node for Josh using `select_nodes()` and specifying that the `name` attribute should have the value `Josh`. Commits are values that exist on the graph's edges, so, we must traverse from the single node (that is, the current node selection) onto any outbound edges. This is done with the `trav_out_edge()` function, and using it will modify the selection to now contain any of those edges directed out of the node.
+Now it is time to use traversals to get more specific information from the graph. If we were to get the total number of commits from Josh, we can first select the node for Josh using `select_nodes()` and specifying that the `name` attribute should have the value `Josh`. Commits are values that exist on the graph's edges, so we must traverse from the single node (that is, the current node selection) onto any outbound edges. This is done with the `trav_out_edge()` function, and using it will modify the selection to now contain any of those edges directed out of the node.
 
 ```{r get_commits_for_specific_user}
 graph %>% 
