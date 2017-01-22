@@ -15,7 +15,7 @@ library(DiagrammeR)
 
 ## Part 1. Information on All Nodes and Edges
 
-When you have a graph object, sometimes you'll want to poke around and inspect some of the nodes, and some of the edges. There are very good reasons for doing so. There can be valuable information within the nodes and edges. Further graph construction may hinge on what's extant in the graph. Also, inspection is a good way to verify that a graph modification has indeed taken place in the correct manner.
+When you have a graph object, sometimes you'll want to poke around and inspect some of the nodes, and some of the edges. There are very good reasons for doing so. There can be valuable information within the nodes and edges. Further graph construction may hinge on what's extant in the graph. Inspection is a good way to verify that graph modification has indeed taken place in the correct manner.
 
 First, let's build a graph to use for the examples. For the node data frame we will include values for the `type`, `label`, and `data` attributes. The edge data frame will contain the `rel`, `color`, and `weight` edge attributes.
 
@@ -55,13 +55,13 @@ The `get_node_ids()` function simply returns a vector of node ID values. This is
 get_node_ids(graph)
 ```
 
-Using the `node_info()` function provides a data frame with detailed information on nodes and their interrelationships within a graph. It always returns the same columns, in the same order. It returns as many rows as there are nodes in the graph. It's useful when you want a quick summary of the node ID values, their labels and `type` values, and their degrees of connectness with other nodes.
+Using the `node_info()` function provides a data frame with detailed information on nodes and their interrelationships within a graph. It always returns the same columns, in the same order. It returns as many rows as there are nodes in the graph. It's useful when you want a quick summary of the node ID values, their labels and `type` values, and their degree of connectedness with other nodes.
 
 ```{r use_node_info}
 node_info(graph)
 ```
 
-In the above table the base attributes of the nodes are provided first (`id`, `type`, and `label`) and then columns with degree information comes next (`deg`, `indeg`, and `outdeg`). The node degree (`deg`) describes the number of edges to or from the node. The indegree and outdegree divide total degree amount by the number of edges inward to the node and outward from the node, respectively. Finally, the `loops` column provides the number of self edges for the node (this is an edge that starts and terminates at the same node, so the degree for that is 2).
+In the above table the base attributes of the nodes are provided first (`id`, `type`, and `label`) and then follow the columns with degree information (`deg`, `indeg`, and `outdeg`). The node degree (`deg`) describes the number of edges to or from the node. The indegree and outdegree are the number of edges coming in to the node and out from the node, respectively. Finally, the `loops` column provides the number of self edges for the node (this is an edge that starts and terminates at the same node, so the degree for that is 2).
 
 The `get_edges()` function returns all of the node ID values related to each edge in the graph:
 
@@ -69,13 +69,13 @@ The `get_edges()` function returns all of the node ID values related to each edg
 get_edges(graph)
 ```
 
-Like nodes, edges also have ID values. This is important for distinguishability of a pair of nodes has multiple edges between them (and especially if they are in the same direction in a directed graph). To get all edge ID values in the graph, use the `get_edge_ids()` function.
+Like nodes, edges also have ID values. This is important for distinguishing between edges when a pair of nodes has multiple edges between them (and especially if they are in the same direction in a directed graph). To get all edge ID values in the graph, use the `get_edge_ids()` function.
 
 ```{r use_get_edge_ids}
 get_edge_ids(graph)
 ```
 
-The `edge_info()`, like the `node_info()` function, always returns a data frame with a set number of columns. In this case, it is the edge ID value `id`, the node ID values `from` and `to` that define the links, and, the relationship (`rel`) labels for the edges.
+The `edge_info()`, like the `node_info()` function, always returns a data frame with a set number of columns. In this case, it is the edge ID value `id`, the node ID values `from` and `to` that define the links, and the relationship (`rel`) labels for the edges.
 
 ```{r use_edge_info}
 edge_info(graph)
@@ -95,7 +95,7 @@ get_node_df(graph)
 get_edge_df(graph)
 ```
 
-For the ndf, the `id`, `type`, and `label` columns will always present and in that prescribed order. For the edf, it is the `id`, `from`, `to`, and `rel` columns will always be present. Any additional columns can be either parameters recognized by the graph rendering engine (e.g., `color`, `fontname`, etc.) or non-aesthetic properties of the nodes or edges (e.g., a node `data` value or an edge `weight`).
+For the ndf, the `id`, `type`, and `label` columns will always be present and in that prescribed order. For the edf, it is the `id`, `from`, `to`, and `rel` columns will always be present. Any additional columns can be either parameters recognized by the graph rendering engine (e.g., `color`, `fontname`, etc.) or non-aesthetic properties of the nodes or edges (e.g., a node `data` value or an edge `weight`).
 
 ## Part 3. Determining Existence of Nodes or Edges
 

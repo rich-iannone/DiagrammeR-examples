@@ -63,7 +63,7 @@ create_random_graph(n = 512, m = 0) %>%
 
 # Part 2. Random Yet Reproducible
 
-Setting a seed is a great way to create something random yet reproduces that random something later use. This can be done within the `create_random_graph()` function by specifying a seed number with the argument `set_seed`. Here's an example
+Setting a seed is a great way to create something random yet reproduceable/re-usable. This can be done within the `create_random_graph()` function by specifying a seed number with the argument `set_seed`. Here's an example
 
 ```{r create_random_graph_w_seed}
 create_random_graph(n = 4, m = 4, set_seed = 30) %>% render_graph()
