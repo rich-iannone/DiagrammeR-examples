@@ -5,8 +5,12 @@
 # Example code in package build process
 *-Ex.R
 
+# HTML files
+*.html*
+
 # RStudio files
 .Rproj.user/
+.RData
 
 # produced vignettes
 vignettes/*.html
