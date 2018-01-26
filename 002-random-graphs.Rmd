@@ -70,7 +70,8 @@ So, using `n = 15` and `m = 105` will yield a fully-connected graph (without loo
 
 ```{r create_random_graph_fully_connected}
 create_graph() %>%
-  add_gnm_graph(n = 15, m = 105) %>%
+  add_gnm_graph(
+    n = 15, m = 105) %>%
   render_graph(layout = "kk")
 ```
 
@@ -89,3 +90,29 @@ create_graph() %>%
   }
 ```
 
+
+# Part 2. Random Yet Reproducible
+
+Setting a seed is a great way to create something random yet reproduceable/re-usable. This can be done within the `add_gnm_graph()` function by specifying a seed number with the argument `set_seed`. Here's an example
+
+```{r create_gnm_graph_w_seed}
+create_graph() %>%
+  add_gnm_graph(
+    n = 4, m = 4,
+    set_seed = 30) %>%
+  render_graph()
+```
+
+Upon repeat runs, the connections in the graph will be the same each and every time (e.g., node `1` is attached to `2` and `4`, `3` is connected to `2`, etc.).
+
+## Part 3. Directed/Undirected Randomness
+
+By default, the graphs generated are directed. To produce undirected graphs, simply include `directed = FALSE` in the `create_graph()` statement, then, use a function that generates a random graph in the usual way.
+
+```{r create_gnm_graph_directed}
+create_graph(directed = FALSE) %>%
+  add_gnm_graph(
+    n = 15, m = 22,
+    set_seed = 23) %>%
+  render_graph()
+```

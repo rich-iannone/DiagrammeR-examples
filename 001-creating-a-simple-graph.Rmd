@@ -3,7 +3,7 @@ title: "001 - Creating a Simple Graph"
 output: html_document
 ---
 
-**DiagrammeR** is all about making it easy to create, modify, and analyze graphs in an **R** environment. When just starting to use the package, it's useful to learn how to generate and view simple graphs. Here, we'll use just a few functions to generate node and edge data frames (i.e., graph building blocks), to create the graph object, and to view the graph.
+**DiagrammeR** is all about making it easy to create, modify, and analyze graphs in an **R** environment. When just starting to use the package, it's useful to learn how to generate and view simple graphs. Here, we'll use just a few functions to generate node and edge data frames (i.e. graph building blocks), to create the graph object, and to view the graph.
 
 ## Setup
 
@@ -18,7 +18,7 @@ library(tidyverse)
 
 ## Part 1. Creating a Simple Graph Using Data Frames
 
-For graph diagrams you need nodes and edges. Let's use the `create_node_df()` function specify a collection of nodes and contain them in a data frame (a node data frame, or ndf). Immediately after that, inspect the node data frame.
+For graph diagrams you need nodes and edges. Let's use the `create_node_df()` function to specify a collection of nodes and contain them in a data frame (a node data frame, or ndf). Immediately after that, inspect the node data frame.
 
 ```{r create_node_df}
 ndf <- 
@@ -29,9 +29,9 @@ ndf <-
 ndf
 ```
 
-The `n` argument is required here and it must the number of nodes you intend this object to contain. The use of `label = TRUE` allows for copying of the node IDs as the node `label` (which is a node attribute). This is not always desirable, however. A better option is to specify of vector of text labels (you can use all manner of characters), but ensure that this vector is the same length as specified by `n`. If you ensure that the `label` node attribute always contains unique values, later on you can select individual nodes by `label` and perform actions on them.
+The `n` argument is required here and it must indicate the number of nodes you intend this object to contain. The use of `label = TRUE` allows for copying of the node IDs as the node `label` (which is a node attribute). This is not always desirable, however. A better option is to specify a vector of text labels (you can use all manner of characters), but ensure that this vector is the same length as specified by `n`. If you ensure that the `label` node attribute always contains unique values, later on you can select individual nodes by `label` and perform actions on them.
 
-You may have noticed the node attribute `type` in the output. Values may optionally be provided for this and they values are useful for categorizing collections of nodes. Let's refine the `ndf` object and include two different `type` values.
+You may have noticed the node attribute `type` in the output. Values may optionally be provided for this such that the values are useful for categorizing collections of nodes. Let's refine the `ndf` object and include two different `type` values.
 
 ```{r create_ndf_type}
 ndf <- 
@@ -54,7 +54,7 @@ edf <-
 edf
 ```
 
-The `from` and `to` arguments specify which nodes the the edge is outgoing and incoming, respectively. Here, the edges are: `1->2` and `1->3`. For directed graphs, the order is essential. The `rel` argument allows for inclusion of text labels in the same manner as the node `type`. This is useful for targeting specific groups of edges during a selection or traversal. Let's refine the `edf` object and include two different `rel` values.
+The `from` and `to` arguments specify which nodes for the edge are outgoing and incoming, respectively. Here, the edges are: `1->2` and `1->3`. For directed graphs, the order is essential. The `rel` argument allows for inclusion of text labels in the same manner as the node `type`. This is useful for targeting specific groups of edges during a selection or traversal. Let's refine the `edf` object and include two different `rel` values.
 
 ```{r create_edf_rel}
 edf <- 
@@ -141,7 +141,7 @@ render_graph(
         label = c("α", "β", "γ"))))
 ```
 
-Nesting calls like becomes less readable with increasing numbers of operations. **DiagrammeR** works very well with the **magrittr** package to allow forward-piping of graph operations with the `%>%` operator. Here is the same set of functions as above, except using `%>%` to chain the operations left to right:
+Nesting calls like this becomes less readable with increasing numbers of operations. **DiagrammeR** works very well with the **magrittr** package to allow forward-piping of graph operations with the `%>%` operator. Here is the same set of functions as above, except using `%>%` to chain the operations left to right:
 
 ```{r create_graph_render_unicode_magrittr}
 create_node_df(
