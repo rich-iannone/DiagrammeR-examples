@@ -1,16 +1,17 @@
 ---
 title: "005 - Inspecting Nodes and Edges"
-output: html_notebook
+output: html_document
 ---
 
 ## Setup
 
-Ensure that the development version of **DiagrammeR** is installed. Load in the package with `library()`.
+Ensure that the development version of **DiagrammeR** is installed. Load in the package with `library()`. Additionally, load in the **tidyverse** packages.
 
-```{r load_packages, results=FALSE}
+```{r load_packages, message=FALSE, warning=FALSE, include=FALSE, results=FALSE}
 #devtools::install_github("rich-iannone/DiagrammeR")
 
 library(DiagrammeR)
+library(tidyverse)
 ```
 
 ## Part 1. Information on All Nodes and Edges
@@ -26,9 +27,11 @@ ndf <-
   create_node_df(
     n = 4,
     type = "number",
-    label = c("one", "two",
-              "three", "four"),
-    data = c(3.5, 2.6, 9.4, 2.7))
+    label = c(
+      "one", "two",
+      "three", "four"),
+    data = c(
+      3.5, 2.6, 9.4, 2.7))
 
 # Create an edge data frame (ndf) with
 # 4 edges
@@ -46,19 +49,19 @@ graph <-
     edges_df = edf)
 
 # Render the graph to see it in the RStudio Viewer
-render_graph(graph)
+graph %>% render_graph()
 ```
 
 The `get_node_ids()` function simply returns a vector of node ID values. This is useful in many cases and is great when used as a sanity check.
 
 ```{r use_get_node_ids}
-get_node_ids(graph)
+graph %>% get_node_ids()
 ```
 
-Using the `node_info()` function provides a data frame with detailed information on nodes and their interrelationships within a graph. It always returns the same columns, in the same order. It returns as many rows as there are nodes in the graph. It's useful when you want a quick summary of the node ID values, their labels and `type` values, and their degrees of connectness with other nodes.
+Using the `get_node_info()` function provides a data frame with detailed information on nodes and their interrelationships within a graph. It always returns the same columns, in the same order. It returns as many rows as there are nodes in the graph. It's useful when you want a quick summary of the node ID values, their labels and `type` values, and their degrees of connectness with other nodes.
 
-```{r use_node_info}
-node_info(graph)
+```{r use_get_node_info}
+graph %>% get_node_info()
 ```
 
 In the above table the base attributes of the nodes are provided first (`id`, `type`, and `label`) and then columns with degree information comes next (`deg`, `indeg`, and `outdeg`). The node degree (`deg`) describes the number of edges to or from the node. The indegree and outdegree divide total degree amount by the number of edges inward to the node and outward from the node, respectively. Finally, the `loops` column provides the number of self edges for the node (this is an edge that starts and terminates at the same node, so the degree for that is 2).
@@ -66,19 +69,19 @@ In the above table the base attributes of the nodes are provided first (`id`, `t
 The `get_edges()` function returns all of the node ID values related to each edge in the graph:
 
 ```{r use_get_edges}
-get_edges(graph)
+graph %>% get_edges()
 ```
 
 Like nodes, edges also have ID values. This is important for distinguishability of a pair of nodes has multiple edges between them (and especially if they are in the same direction in a directed graph). To get all edge ID values in the graph, use the `get_edge_ids()` function.
 
 ```{r use_get_edge_ids}
-get_edge_ids(graph)
+graph %>% get_edge_ids()
 ```
 
-The `edge_info()`, like the `node_info()` function, always returns a data frame with a set number of columns. In this case, it is the edge ID value `id`, the node ID values `from` and `to` that define the links, and, the relationship (`rel`) labels for the edges.
+The `get_edge_info()`, like the `get_node_info()` function, always returns a data frame with a set number of columns. In this case, it is the edge ID value `id`, the node ID values `from` and `to` that define the links, and, the relationship (`rel`) labels for the edges.
 
-```{r use_edge_info}
-edge_info(graph)
+```{r use_get_edge_info}
+graph %>% get_edge_info()
 ```
 
 ## Part 2. Inspecting Nodes, Edges, and their Attributes
@@ -87,53 +90,61 @@ Two of a graph object's main components are its node data frame (ndf) and its ed
 
 ```{r use_get_node_df}
 # Get the graph's ndf with the `get_node_df()` function
-get_node_df(graph)
+graph %>% get_node_df()
 ```
 
 ```{r use_get_edge_df}
 # Get the graph's edf with the `get_edge_df()` function
-get_edge_df(graph)
+graph %>% get_edge_df()
 ```
 
 For the ndf, the `id`, `type`, and `label` columns will always present and in that prescribed order. For the edf, it is the `id`, `from`, `to`, and `rel` columns will always be present. Any additional columns can be either parameters recognized by the graph rendering engine (e.g., `color`, `fontname`, etc.) or non-aesthetic properties of the nodes or edges (e.g., a node `data` value or an edge `weight`).
 
 ## Part 3. Determining Existence of Nodes or Edges
 
-There may be cases where you need to verify that a certain node ID exists in the graph or that an edge definition is present. The `node_present()` and `edge_present()` functions will provide a `TRUE` or `FALSE` value as confirmation.
+There may be cases where you need to verify that a certain node ID exists in the graph or that an edge definition is present. The `is_node_present()` and `is_edge_present()` functions will provide a `TRUE` or `FALSE` value as confirmation.
 
 Get the node ID values present in the graph with the `get_node_ids()` function.
 
 ```{r use_get_node_id_2}
-get_node_ids(graph)
+graph %>% get_node_ids()
 ```
 
 Is node with ID `1` in the graph? Use `node_present()` to find out.
 
 ```{r is_node_1_present}
-node_present(graph, 1)
+graph %>%
+  is_node_present(node = 1)
 ```
 
 Is node with ID `5` in the graph?
 
 ```{r is_node_5_present}
-node_present(graph, 5)
+graph %>%
+  is_node_present(node = 5)
 ```
 
 Get the node ID values associated with the edges present in the graph (with the `get_edges()` function).
 
 ```{r use_get_edges_2}
-get_edges(graph)
+graph %>% get_edges()
 ```
 
 To determine whether an edge is present, the `edge_present()` function takes 2 arguments after `graph`: `from` and `to`. So, to find out whether the edge `1->4` is present, the following can be used:
 
 ```{r is_edge_1_4_present}
-edge_present(graph, 1, 4)
+graph %>%
+  is_edge_present(
+    from = 1,
+    to = 4)
 ```
 
 Since the the edge `2->4` does not exist, the following will return FALSE:
 
 ```{r is_edge_2_4_present}
-edge_present(graph, 2, 4)
+graph %>%
+  is_edge_present(
+    from = 2,
+    to = 4)
 ```
 

@@ -1,80 +1,91 @@
 ---
 title: "002 - Random Graphs"
-output: html_notebook
+output: html_document
 ---
 
 Creating a randomized graph is actually quite useful. Seeing these graphs with specified numbers of nodes and edges will allow you to quickly get a sense of how connected graphs can be at different sizes.
 
 ## Setup
 
-Ensure that the development version of **DiagrammeR** is installed. Load in the package with `library()`.
+Ensure that the development version of **DiagrammeR** is installed. Load in the package with `library()`. Additionally, load in the **tidyverse** packages.
 
-```{r load_packages, results=FALSE}
+```{r load_packages, message=FALSE, warning=FALSE, include=FALSE, results=FALSE}
 #devtools::install_github("rich-iannone/DiagrammeR")
 
-library("DiagrammeR")
+library(DiagrammeR)
+library(tidyverse)
 ```
 
-## Part 1. Random Graphs with `create_random_graph()`
+## Part 1. Random Graphs with `create_graph()` + `add_gnm_graph()`
 
-The `create_random_graph()` function is provided in **DiagrammeR** with several options for creating random graphs. In all of the examples, the function will pipe the graph object to the `render_graph()` function (using the **magrittr** `%>%` operator) with the `output = "visNetwork"` option set. This is useful for quickly inspecting the graph upon creation.
+There are several functions that help us to create randomized graph structures. One of the easier ones to reason about is the `add_gnm_graph()` function. That function creates a graph structure using the G(n, m) Erdos-Renyi graph algorithm and inserts that into an existing graph object. Thus, for all the following example, we'll create an empty graph with `create_graph()`, then we'll use the forward pipe (`%>%`) to add the randomized graph, then finally we'll view the graph with `render_graph()`.
 
-To start, we can create a not-so-random graph with 2 nodes (`n` argument) and 1 edge (`m` argument). By default, the graph produced is an undirected graph.
+To start, we can create a somewhat random graph with two nodes (`n` argument) and one edge (`m` argument). The resulting graph will be a directed graph because we initialized the graph space with `create_graph()` and the default value for `directed` is `TRUE`.
 
-```{r create_random_graph_render}
+```{r create_graph_gnm_graph_render}
 # Create a random graph with 2 nodes, an edge,
 # and display the graph
-create_random_graph(n = 2, m = 1) %>% render_graph()
+create_graph() %>%
+  add_gnm_graph(
+    n = 2, m = 1) %>%
+  render_graph()
 ```
 
-It's obviously better to make a graph with more nodes and edges. Next, we will create a random graph with 15 nodes and 30 edges:
+Although there are only two nodes and a single edge, you might note that when repeatedly running the above code the edge can either have the definition `1 -> 2` or `2 -> 1`. If you'd like to make the resulting graph reproducible (and we'll do this for all subsequent examples), we can use the `set_seed` argument and supply an integer. This works for each separate call of `add_gnm_graph()` since we can add multiple random graphs to the graph space.
 
-```{r create_random_graph_render_2}
-create_random_graph(n = 15, m = 30) %>% render_graph()
+```{r create_graph_multi_gnm_graph_set_seed_render}
+# Create a random graph with 2 nodes, an edge,
+# and display the graph
+create_graph() %>%
+  add_gnm_graph(
+    n = 2, m = 1,
+    set_seed = 23) %>%
+  add_gnm_graph(
+    n = 2, m = 1,
+    set_seed = 23) %>%
+  render_graph()
 ```
 
-In all of the random graphs created with this function, there is only one edge created for each pair of nodes (i.e., no cases with multiple edges between nodes).
+It might be more interesting to make a graph with a higher number of nodes and edges. Next, we will create a G(n, m) graph with 15 nodes and 30 edges:
 
-If you specify a number of edges that exceeds the number in a fully-connected graph of size `n`, you get an error. It's an informative error (providing the maximum number of edges `m` for the given `n`) but it's an error nonetheless.
+```{r create_graph_gnm_graph_render_2}
+create_graph() %>%
+  add_gnm_graph(
+    n = 15, m = 30) %>%
+  render_graph()
+```
 
-```{r create_random_graph_too_many_edges}
+In all of the random graphs created with this function, there can only be up to 2 edges created for each pair of nodes (e.g, `1 -> 2` and `2 -> 1` edges for nodes `1` and `2`). In other words, there won't be what are termed *multiple edges* between nodes.
 
-create_random_graph(n = 15, m = 200) %>% render_graph()
+If you specify a number of edges that exceeds the number in a fully-connected graph of size `n`, you'll get an error.
+
+```{r create_random_graph_too_many_edges, message=TRUE, error=TRUE}
+try(
+  create_graph() %>%
+    add_gnm_graph(n = 5, m = 25) %>%
+    render_graph(layout = "kk"))
 ```
 
 So, using `n = 15` and `m = 105` will yield a fully-connected graph (without loops though) with 15 nodes (this is much the same as using `create_graph() %>% add_full_graph(n = 15, keep_loops = FALSE)`). Here is the output graph:
 
 ```{r create_random_graph_fully_connected}
-create_random_graph(n = 15, m = 105) %>% render_graph()
+create_graph() %>%
+  add_gnm_graph(n = 15, m = 105) %>%
+  render_graph(layout = "kk")
 ```
 
 Alternatively, you don't need to have edges in the randomly generated graph. Simply specify `m = 0` for any number of nodes `n`:
 
-```{r create_random_graph_512_nodes_0_edges}
+```{r create_random_graph_512_nodes_0_edges, echo=TRUE, paged.print=TRUE}
 # Create a random graph with 512 nodes and no edges;
-# output a data frame with node and edge counts
-create_random_graph(n = 512, m = 0) %>%
+# output a tibble with node and edge counts
+create_graph() %>%
+  add_gnm_graph(
+    n = 512, m = 0) %>%
   {
-    node_count <- get_node_df(.) %>% nrow()
-    edge_count <- get_edge_df(.) %>% nrow()
-    data.frame(nodes = node_count, edges = edge_count)
+    dplyr::tibble(
+      nodes = count_nodes(.),
+      edges = count_edges(.))
   }
 ```
 
-# Part 2. Random Yet Reproducible
-
-Setting a seed is a great way to create something random yet reproduces that random something later use. This can be done within the `create_random_graph()` function by specifying a seed number with the argument `set_seed`. Here's an example
-
-```{r create_random_graph_w_seed}
-create_random_graph(n = 4, m = 4, set_seed = 30) %>% render_graph()
-```
-
-Upon repeat runs, the connections in the graph will be the same each and every time (e.g., node `1` is attached to all other nodes, `2` is connected to `1`, etc.).
-
-## Part 3. Directed/Undirected Randomness
-
-By default, the random graphs generated are undirected. To produce directed graphs, simply include `directed = TRUE` in the `create_random_graph()` statement.
-
-```{r create_random_graph_directed}
-create_random_graph(n = 15, m = 22, directed = TRUE) %>% render_graph()
-```

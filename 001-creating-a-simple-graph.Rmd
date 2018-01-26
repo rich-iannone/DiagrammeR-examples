@@ -1,18 +1,19 @@
 ---
 title: "001 - Creating a Simple Graph"
-output: html_notebook
+output: html_document
 ---
 
 **DiagrammeR** is all about making it easy to create, modify, and analyze graphs in an **R** environment. When just starting to use the package, it's useful to learn how to generate and view simple graphs. Here, we'll use just a few functions to generate node and edge data frames (i.e., graph building blocks), to create the graph object, and to view the graph.
 
 ## Setup
 
-Ensure that the development version of **DiagrammeR** is installed. Load in the package with `library()`.
+Ensure that the development version of **DiagrammeR** is installed. Load in the package with `library()`. Additionally, load in the **tidyverse** packages.
 
-```{r load_packages, results=FALSE}
+```{r load_packages, message=FALSE, warning=FALSE, include=FALSE, results=FALSE}
 #devtools::install_github("rich-iannone/DiagrammeR")
 
-library("DiagrammeR")
+library(DiagrammeR)
+library(tidyverse)
 ```
 
 ## Part 1. Creating a Simple Graph Using Data Frames
@@ -83,13 +84,6 @@ Having a graph object is a great first step and you can do a lot with them (insp
 render_graph(graph = the_graph, output = "graph")
 ```
 
-### Vivagraph
-
-```{r render_graph_vivagraph}
-# Show the graph using the Vivagraph engine
-render_graph(graph = the_graph, output = "vivagraph")
-```
-
 ### visNetwork
 ```{r render_graph_visnetwork}
 # Show the graph using the visNetwork engine
@@ -103,7 +97,8 @@ You don't really need to have a node data frame in conjunction with the edge dat
 ```{r create_graph_render}
 # Render a just created graph; there aren't
 # any nodes for the view should be empty
-render_graph(create_graph())
+render_graph(
+  create_graph())
 ```
 
 ## Part 3. Graph with Nodes but No Edges
@@ -124,7 +119,7 @@ the_graph <- create_graph(nodes_df = ndf)
 render_graph(graph = the_graph)
 ```
 
-Here is an example with 26 nodes, this time wrapping the `create_nodes()`, `create_graph()`, and `render_graph()` function calls into one big statement.
+Here is an example with 26 nodes, this time wrapping the `create_nodes()`, `create_graph()`, and `render_graph()` function calls into one big statement. We can provide exactly 26 capital letters as node labels by providing the built-in `LETTERS` vector to `label`.
 
 ```{r create_graph_nested_render}
 render_graph(
@@ -152,8 +147,8 @@ Nesting calls like becomes less readable with increasing numbers of operations. 
 create_node_df(
   n = 3, label = c("α", "β", "γ")) %>%
   create_graph(nodes_df = .) %>%
-  render_graph
+  render_graph()
 ```
 
-The `.` character in the `create_graph()` statement indicates that the returned output from the previous `create_node_df()` statement should go here. Otherwise, the default behavior is that the output from a statement becomes the value for the first argument (which is often omitted entirely). The functions in **DiagrammeR** are designed to have this forward-pipe pattern work well. With further examples, you'll see how this can make even complicated graph operations easy to compose and to read.
+The `.` character in the `create_graph()` statement indicates that the returned output from the previous `create_node_df()` statement should go here. Otherwise, the default behavior is that the output from a statement becomes the value for the first argument (which is often omitted entirely). The functions in **DiagrammeR** are designed to have this forward-pipe pattern work well. With further examples, you'll see how this can make even complicated graph operations easier to compose and to read.
 
